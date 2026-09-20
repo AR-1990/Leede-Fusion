@@ -1,0 +1,23 @@
+@import './storefront.css';
+
+[x-cloak] {
+    display: none !important;
+}
+
+.cart-bounce {
+    animation: cart-bounce 0.3s ease;
+}
+
+@keyframes cart-bounce {
+    0%,
+    100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.3);
+    }
+}
+
+.preloader {
+    transition: transform 1s cubic-bezier(0.76, 0, 0.24, 1);
+}

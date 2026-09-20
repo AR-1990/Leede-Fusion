@@ -1,0 +1,12 @@
+-- Import this file in phpMyAdmin (or mysql CLI) for a complete database in one step:
+--   database/wahla_phpmyadmin_full_import.sql
+--
+-- It creates `wahla_cloth_house`, all tables, migration rows, admin + demo user,
+-- categories, and products. Login password for seeded users: password
+--
+-- Then set backend/.env to:
+--   DB_CONNECTION=mysql
+--   DB_DATABASE=wahla_cloth_house
+--   DB_HOST=127.0.0.1
+--   DB_USERNAME=root
+--   DB_PASSWORD=

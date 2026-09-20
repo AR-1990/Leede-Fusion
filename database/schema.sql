@@ -1,0 +1,3 @@
+-- Deprecated placeholder. Use one of:
+--   1) php artisan migrate --seed   (recommended; keeps migration history correct)
+--   2) database/wahla_cloth_house_schema.sql   (MySQL import of current table DDL + migrations rows)
