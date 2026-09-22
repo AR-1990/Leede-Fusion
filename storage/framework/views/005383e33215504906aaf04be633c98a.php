@@ -40,7 +40,7 @@
             <a href="#categories">Kids</a>
             <a href="#categories">Accessories</a>
             <a href="<?php echo e(url('/story')); ?>">Our Story</a>
-            <a href="#contact">Contact</a>
+            <a href="<?php echo e(url('/#contact')); ?>">Contact</a>
         </div>
 
         <div class="navbar-actions">
@@ -102,7 +102,7 @@
             <a href="#categories" @click="menuOpen = false">Kids</a>
             <a href="#categories" @click="menuOpen = false">Accessories</a>
             <a href="<?php echo e(url('/story')); ?>" @click="menuOpen = false">Our Story</a>
-            <a href="#contact" @click="menuOpen = false">Contact</a>
+            <a href="<?php echo e(url('/#contact')); ?>" @click="menuOpen = false">Contact</a>
 
             <template x-if="$store.auth.isAuthenticated">
                 <div>

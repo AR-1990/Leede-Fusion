@@ -27,8 +27,9 @@
         <div class="footer-links-column reveal reveal-fade-up delay-200">
             <h4 class="footer-label">Info</h4>
             <a href="<?php echo e(url('/story')); ?>">Our Story</a>
-            <a href="#contact">Contact Us</a>
-            <a href="#contact">Location</a>
+            <a href="<?php echo e(url('/#journal')); ?>">Journal & Blog</a>
+            <a href="<?php echo e(url('/#contact')); ?>">Contact Us</a>
+            <a href="<?php echo e(url('/#contact')); ?>">Location</a>
         </div>
 
         <div class="footer-contact-column reveal reveal-fade-up delay-300">

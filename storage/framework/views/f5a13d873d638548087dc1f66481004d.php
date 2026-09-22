@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
 
-    <title><?php echo $__env->yieldContent('title', 'Dashboard'); ?> | Leedee Fusion Admin</title>
+    <title><?php echo $__env->yieldContent('title', 'Dashboard'); ?> | Leede Fusion Admin</title>
 
     <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -15,6 +15,8 @@
     <!-- Admin Theme CSS & Scripts -->
     <?php if(file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot'))): ?>
         <?php echo app('Illuminate\Foundation\Vite')(['resources/css/admin-theme.css', 'resources/js/app.js']); ?>
+    <?php else: ?>
+        <link rel="stylesheet" href="<?php echo e(asset('css/admin-theme.css')); ?>">
     <?php endif; ?>
 
     <style>
@@ -55,8 +57,8 @@
         <aside class="admin-sidebar">
             <div class="sidebar-brand">
                 <a href="<?php echo e(route('admin.dashboard')); ?>" class="sidebar-brand-link">
-                    <img src="<?php echo e(asset('Logo.png')); ?>" alt="Leedee Fusion logo" class="brand-logo-image">
-                    <span class="brand-name">Leedee Fusion</span>
+                    <img src="<?php echo e(asset('Logo.png')); ?>" alt="Leede Fusion logo" class="brand-logo-image">
+                    <span class="brand-name"><span class="brand-word-primary">Leede</span> <span class="brand-word-secondary">Fusion</span></span>
                     <span class="brand-badge">Admin</span>
                 </a>
             </div>
@@ -118,6 +120,23 @@
                     <?php endif; ?>
                 </a>
 
+                <a href="<?php echo e(route('admin.inquiries')); ?>" class="sidebar-link <?php echo e(request()->routeIs('admin.inquiries*') ? 'active' : ''); ?>">
+                    <span class="link-icon">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                        </svg>
+                    </span>
+                    <span class="link-text" style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                        <span>Inquiries</span>
+                        <?php if(!empty($unreadInquiriesCount) && $unreadInquiriesCount > 0): ?>
+                            <span class="sidebar-badge" style="background: #ef4444; color: #fff; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 9999px; line-height: 1.4;"><?php echo e($unreadInquiriesCount); ?></span>
+                        <?php endif; ?>
+                    </span>
+                    <?php if(request()->routeIs('admin.inquiries*')): ?>
+                        <div class="active-indicator"></div>
+                    <?php endif; ?>
+                </a>
+
                 <a href="<?php echo e(route('admin.users')); ?>" class="sidebar-link <?php echo e(request()->routeIs('admin.users') ? 'active' : ''); ?>">
                     <span class="link-icon">
                         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -150,14 +169,14 @@
             <!-- Header Bar -->
             <header class="admin-header admin-header-premium">
                 <div class="header-info">
-                    <p class="admin-header-eyebrow">Leedee Fusion Admin</p>
+                    <p class="admin-header-eyebrow">Leede Fusion Admin</p>
                     <h1 class="page-title admin-header-title"><?php echo $__env->yieldContent('page_title', 'Dashboard'); ?></h1>
                     <p class="admin-header-meta"><?php echo $__env->yieldContent('page_subtitle', 'Overview and live store activity'); ?></p>
                 </div>
 
                 <div class="admin-user-profile admin-header-user">
                     <div class="admin-user-text">
-                        <span class="admin-name" x-text="$store.auth.user?.name || '<?php echo e(auth()->user()->name ?? 'Leedee Fusion Admin'); ?>'"></span>
+                        <span class="admin-name" x-text="$store.auth.user?.name || '<?php echo e(auth()->user()->name ?? 'Leede Fusion Admin'); ?>'"></span>
                         <div class="admin-user-actions">
                             <span class="admin-role-badge">Admin</span>
                             <button type="button" @click="logout()" class="admin-logout-btn">
@@ -177,8 +196,8 @@
                 <?php echo $__env->yieldContent('content'); ?>
             </div>
 
-            <!-- Leedee Fusion Brand Watermark on Bottom Right -->
-            <div class="main-bottom-brand" aria-hidden="true">Leedee Fusion</div>
+            <!-- Leede Fusion Brand Watermark on Bottom Right -->
+            <div class="main-bottom-brand" aria-hidden="true">Leede Fusion</div>
         </main>
     </div>
 

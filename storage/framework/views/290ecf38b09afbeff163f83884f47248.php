@@ -20,6 +20,8 @@
 
     <?php if(file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot'))): ?>
         <?php echo app('Illuminate\Foundation\Vite')(['resources/css/app.css', 'resources/js/app.js']); ?>
+    <?php else: ?>
+        <link rel="stylesheet" href="<?php echo e(asset('css/storefront.css')); ?>">
     <?php endif; ?>
     <?php echo $__env->yieldPushContent('head'); ?>
 </head>
