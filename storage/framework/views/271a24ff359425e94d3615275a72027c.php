@@ -1,6 +1,6 @@
 <div class="top-bar">
     <div class="social-icons">
-        <a href="{{ config('content.project.whatsapp_link') }}" target="_blank" rel="noopener noreferrer" class="social-icon-link" aria-label="WhatsApp" title="WhatsApp">
+        <a href="<?php echo e(config('content.project.whatsapp_link')); ?>" target="_blank" rel="noopener noreferrer" class="social-icon-link" aria-label="WhatsApp" title="WhatsApp">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                 <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
             </svg>
@@ -27,24 +27,24 @@
 <header class="navbar-sticky-wrapper" x-data="navbar()">
 
     <nav class="navbar">
-        <a href="{{ route('home') }}" class="navbar-logo">
-            <img src="{{ asset('Logo.png') }}" alt="Leede Fusion logo">
+        <a href="<?php echo e(route('home')); ?>" class="navbar-logo">
+            <img src="<?php echo e(asset('Logo.png')); ?>" alt="Leede Fusion logo">
             <span><span class="brand-word-primary">Leede</span> <span class="brand-word-secondary">Fusion</span></span>
         </a>
 
         <div class="navbar-links desktop-only">
-            <a href="{{ route('home') }}">Home</a>
-            <a href="{{ url('/collections') }}">Collections</a>
+            <a href="<?php echo e(route('home')); ?>">Home</a>
+            <a href="<?php echo e(url('/collections')); ?>">Collections</a>
             <a href="#all-collections">Men</a>
             <a href="#all-collections">Women</a>
             <a href="#categories">Kids</a>
             <a href="#categories">Accessories</a>
-            <a href="{{ url('/story') }}">Our Story</a>
-            <a href="{{ url('/#contact') }}">Contact</a>
+            <a href="<?php echo e(url('/story')); ?>">Our Story</a>
+            <a href="<?php echo e(url('/#contact')); ?>">Contact</a>
         </div>
 
         <div class="navbar-actions">
-            <a href="{{ url('/cart') }}" class="navbar-cart-link">
+            <a href="<?php echo e(url('/cart')); ?>" class="navbar-cart-link">
                 <div class="cart-icon-wrapper" :class="{ 'cart-bounce': cartAnimating }">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path>
@@ -75,10 +75,10 @@
                     </div>
                     <div class="dropdown-body">
                         <template x-if="$store.auth.isAdmin">
-                            <a href="{{ url('/admin') }}" style="font-weight: 700; color: #111; border-left: 3px solid #111; padding-left: 17px;" @click="profileOpen = false">Admin Dashboard &rarr;</a>
+                            <a href="<?php echo e(url('/admin')); ?>" style="font-weight: 700; color: #111; border-left: 3px solid #111; padding-left: 17px;" @click="profileOpen = false">Admin Dashboard &rarr;</a>
                         </template>
-                        <a href="{{ url('/profile') }}" @click="profileOpen = false">My Profile</a>
-                        <a href="{{ url('/orders') }}" @click="profileOpen = false">My Orders</a>
+                        <a href="<?php echo e(url('/profile')); ?>" @click="profileOpen = false">My Profile</a>
+                        <a href="<?php echo e(url('/orders')); ?>" @click="profileOpen = false">My Orders</a>
                         <button type="button" @click="$store.auth.logout(); profileOpen = false">Logout</button>
                     </div>
                 </div>
@@ -95,32 +95,33 @@
 
     <div class="mobile-menu" x-show="menuOpen" x-cloak x-transition:enter.opacity.duration.300ms>
         <div class="mobile-menu-links">
-            <a href="{{ route('home') }}" @click="menuOpen = false">Home</a>
-            <a href="{{ url('/collections') }}" @click="menuOpen = false">Collections</a>
+            <a href="<?php echo e(route('home')); ?>" @click="menuOpen = false">Home</a>
+            <a href="<?php echo e(url('/collections')); ?>" @click="menuOpen = false">Collections</a>
             <a href="#all-collections" @click="menuOpen = false">Men</a>
             <a href="#all-collections" @click="menuOpen = false">Women</a>
             <a href="#categories" @click="menuOpen = false">Kids</a>
             <a href="#categories" @click="menuOpen = false">Accessories</a>
-            <a href="{{ url('/story') }}" @click="menuOpen = false">Our Story</a>
-            <a href="{{ url('/#contact') }}" @click="menuOpen = false">Contact</a>
+            <a href="<?php echo e(url('/story')); ?>" @click="menuOpen = false">Our Story</a>
+            <a href="<?php echo e(url('/#contact')); ?>" @click="menuOpen = false">Contact</a>
 
             <template x-if="$store.auth.isAuthenticated">
                 <div>
                     <template x-if="$store.auth.isAdmin">
-                        <a href="{{ url('/admin') }}" style="font-weight: 700; color: #111;" @click="menuOpen = false">Admin Dashboard</a>
+                        <a href="<?php echo e(url('/admin')); ?>" style="font-weight: 700; color: #111;" @click="menuOpen = false">Admin Dashboard</a>
                     </template>
-                    <a href="{{ url('/profile') }}" @click="menuOpen = false">My profile</a>
-                    <a href="{{ url('/orders') }}" @click="menuOpen = false">My orders</a>
+                    <a href="<?php echo e(url('/profile')); ?>" @click="menuOpen = false">My profile</a>
+                    <a href="<?php echo e(url('/orders')); ?>" @click="menuOpen = false">My orders</a>
                     <button type="button" class="mobile-auth-btn" @click="$store.auth.logout(); menuOpen = false">Logout</button>
                 </div>
             </template>
             <template x-if="!$store.auth.isAuthenticated">
-                <a href="{{ url('/login') }}" @click="menuOpen = false" class="mobile-auth-btn">Login / Register</a>
+                <a href="<?php echo e(url('/login')); ?>" @click="menuOpen = false" class="mobile-auth-btn">Login / Register</a>
             </template>
 
-            <a href="{{ url('/cart') }}" @click="menuOpen = false" class="mobile-cart-link">
+            <a href="<?php echo e(url('/cart')); ?>" @click="menuOpen = false" class="mobile-cart-link">
                 Cart (<span x-text="$store.cart.count"></span>)
             </a>
         </div>
     </div>
 </header>
+<?php /**PATH /Users/mac/Documents/GitHub/Leede-Fusion/resources/views/partials/navbar.blade.php ENDPATH**/ ?>

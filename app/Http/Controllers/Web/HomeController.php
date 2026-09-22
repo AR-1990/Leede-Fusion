@@ -37,6 +37,7 @@ class HomeController extends Controller
             'heroSlides' => config('content.hero_slides'),
             'whyShop' => config('content.why_shop'),
             'project' => config('content.project'),
+            'blogPosts' => config('content.blog_posts', []),
         ]);
     }
 }

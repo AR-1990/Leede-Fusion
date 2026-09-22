@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Models\ContactInquiry;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
@@ -70,6 +71,23 @@ class AdminController extends Controller
         $orders = Order::query()->with(['items.product', 'user'])->latest()->get();
 
         return view('admin.orders', compact('orders'));
+    }
+
+    /**
+     * Show customer contact inquiries.
+     */
+    public function inquiries(Request $request)
+    {
+        $inquiries = ContactInquiry::query()->latestFirst()->get();
+
+        $stats = [
+            'total' => $inquiries->count(),
+            'unread' => $inquiries->where('status', 'unread')->count(),
+            'responded' => $inquiries->where('status', 'responded')->count(),
+            'today' => $inquiries->filter(fn ($i) => $i->created_at && $i->created_at->isToday())->count(),
+        ];
+
+        return view('admin.inquiries', compact('inquiries', 'stats'));
     }
 
     /**

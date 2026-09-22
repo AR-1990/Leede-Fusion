@@ -60,6 +60,8 @@ Route::get('/categories/{category}', [CategoryController::class, 'show']);
 Route::get('/products', [ProductController::class, 'index']);
 Route::get('/products/{product}', [ProductController::class, 'show']);
 
+Route::post('/contact', [\App\Http\Controllers\ContactInquiryController::class, 'store']);
+
 /*
 |--------------------------------------------------------------------------
 | Authenticated
@@ -78,6 +80,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
         Route::get('/admin/users', [AdminUserController::class, 'index']);
         Route::get('/admin/users/{user}', [AdminUserController::class, 'show']);
+
+        Route::get('/admin/inquiries', [\App\Http\Controllers\ContactInquiryController::class, 'index']);
+        Route::patch('/admin/inquiries/{inquiry}/status', [\App\Http\Controllers\ContactInquiryController::class, 'updateStatus']);
+        Route::delete('/admin/inquiries/{inquiry}', [\App\Http\Controllers\ContactInquiryController::class, 'destroy']);
 
         Route::post('/categories', [CategoryController::class, 'store']);
         Route::put('/categories/{category}', [CategoryController::class, 'update']);

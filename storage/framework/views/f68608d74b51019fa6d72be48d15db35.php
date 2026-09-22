@@ -195,7 +195,7 @@
                         </div>
                         <div>
                             <div class="boutique-detail-label">STORE LOCATION</div>
-                            <div class="boutique-detail-val">{{ $project['location'] ?? 'Karachi, Sindh, Pakistan' }}</div>
+                            <div class="boutique-detail-val"><?php echo e($project['location'] ?? 'Karachi, Sindh, Pakistan'); ?></div>
                         </div>
                     </div>
 
@@ -208,7 +208,7 @@
                         </div>
                         <div>
                             <div class="boutique-detail-label">BUSINESS HOURS</div>
-                            <div class="boutique-detail-val">{{ $project['hours'] ?? 'Mon - Sun: 9:00 AM – 9:00 PM' }}</div>
+                            <div class="boutique-detail-val"><?php echo e($project['hours'] ?? 'Mon - Sun: 9:00 AM – 9:00 PM'); ?></div>
                         </div>
                     </div>
 
@@ -221,16 +221,17 @@
                         <div>
                             <div class="boutique-detail-label">DIRECT PHONE & EMAIL</div>
                             <div class="boutique-detail-val">
-                                {{ $project['phone'] ?? '0306 6978156' }}<br>
-                                <a href="mailto:{{ $project['email'] ?? 'leede@gmail.com' }}" style="color: #4b5563; text-decoration: underline;">
-                                    {{ $project['email'] ?? 'leede@gmail.com' }}
+                                <?php echo e($project['phone'] ?? '0306 6978156'); ?><br>
+                                <a href="mailto:<?php echo e($project['email'] ?? 'leede@gmail.com'); ?>" style="color: #4b5563; text-decoration: underline;">
+                                    <?php echo e($project['email'] ?? 'leede@gmail.com'); ?>
+
                                 </a>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <a href="{{ $project['whatsapp_link'] ?? 'https://wa.me/923066978156' }}"
+                <a href="<?php echo e($project['whatsapp_link'] ?? 'https://wa.me/923066978156'); ?>"
                    target="_blank"
                    rel="noopener noreferrer"
                    class="boutique-wa-btn">
@@ -258,3 +259,4 @@
         </div>
     </div>
 </section>
+<?php /**PATH /Users/mac/Documents/GitHub/Leede-Fusion/resources/views/sections/location-map.blade.php ENDPATH**/ ?>

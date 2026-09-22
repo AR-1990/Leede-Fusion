@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="<?php echo e(str_replace('_', '-', app()->getLocale())); ?>">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
 
-    <title>@yield('title', 'Dashboard') | Leede Fusion Admin</title>
+    <title><?php echo $__env->yieldContent('title', 'Dashboard'); ?> | Leede Fusion Admin</title>
 
     <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,17 +13,17 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Admin Theme CSS & Scripts -->
-    @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
-        @vite(['resources/css/admin-theme.css', 'resources/js/app.js'])
-    @else
-        <link rel="stylesheet" href="{{ asset('css/admin-theme.css') }}">
-    @endif
+    <?php if(file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot'))): ?>
+        <?php echo app('Illuminate\Foundation\Vite')(['resources/css/admin-theme.css', 'resources/js/app.js']); ?>
+    <?php else: ?>
+        <link rel="stylesheet" href="<?php echo e(asset('css/admin-theme.css')); ?>">
+    <?php endif; ?>
 
     <style>
         [x-cloak] { display: none !important; }
         body { margin: 0; padding: 0; font-family: var(--font-body, 'Inter', sans-serif); }
     </style>
-    @stack('styles')
+    <?php echo $__env->yieldPushContent('styles'); ?>
 </head>
 <body x-data="{
     user: $store.auth.user,
@@ -56,15 +56,15 @@
         <!-- Sidebar -->
         <aside class="admin-sidebar">
             <div class="sidebar-brand">
-                <a href="{{ route('admin.dashboard') }}" class="sidebar-brand-link">
-                    <img src="{{ asset('Logo.png') }}" alt="Leede Fusion logo" class="brand-logo-image">
+                <a href="<?php echo e(route('admin.dashboard')); ?>" class="sidebar-brand-link">
+                    <img src="<?php echo e(asset('Logo.png')); ?>" alt="Leede Fusion logo" class="brand-logo-image">
                     <span class="brand-name"><span class="brand-word-primary">Leede</span> <span class="brand-word-secondary">Fusion</span></span>
                     <span class="brand-badge">Admin</span>
                 </a>
             </div>
 
             <nav class="sidebar-nav">
-                <a href="{{ route('admin.dashboard') }}" class="sidebar-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+                <a href="<?php echo e(route('admin.dashboard')); ?>" class="sidebar-link <?php echo e(request()->routeIs('admin.dashboard') ? 'active' : ''); ?>">
                     <span class="link-icon">
                         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <rect width="7" height="9" x="3" y="3" rx="1"></rect>
@@ -74,12 +74,12 @@
                         </svg>
                     </span>
                     <span class="link-text">Dashboard</span>
-                    @if(request()->routeIs('admin.dashboard'))
+                    <?php if(request()->routeIs('admin.dashboard')): ?>
                         <div class="active-indicator"></div>
-                    @endif
+                    <?php endif; ?>
                 </a>
 
-                <a href="{{ route('admin.products') }}" class="sidebar-link {{ request()->routeIs('admin.products') ? 'active' : '' }}">
+                <a href="<?php echo e(route('admin.products')); ?>" class="sidebar-link <?php echo e(request()->routeIs('admin.products') ? 'active' : ''); ?>">
                     <span class="link-icon">
                         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
@@ -87,12 +87,12 @@
                         </svg>
                     </span>
                     <span class="link-text">Products</span>
-                    @if(request()->routeIs('admin.products'))
+                    <?php if(request()->routeIs('admin.products')): ?>
                         <div class="active-indicator"></div>
-                    @endif
+                    <?php endif; ?>
                 </a>
 
-                <a href="{{ route('admin.categories') }}" class="sidebar-link {{ request()->routeIs('admin.categories') ? 'active' : '' }}">
+                <a href="<?php echo e(route('admin.categories')); ?>" class="sidebar-link <?php echo e(request()->routeIs('admin.categories') ? 'active' : ''); ?>">
                     <span class="link-icon">
                         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
@@ -101,12 +101,12 @@
                         </svg>
                     </span>
                     <span class="link-text">Categories</span>
-                    @if(request()->routeIs('admin.categories'))
+                    <?php if(request()->routeIs('admin.categories')): ?>
                         <div class="active-indicator"></div>
-                    @endif
+                    <?php endif; ?>
                 </a>
 
-                <a href="{{ route('admin.orders') }}" class="sidebar-link {{ request()->routeIs('admin.orders') ? 'active' : '' }}">
+                <a href="<?php echo e(route('admin.orders')); ?>" class="sidebar-link <?php echo e(request()->routeIs('admin.orders') ? 'active' : ''); ?>">
                     <span class="link-icon">
                         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path>
@@ -115,12 +115,12 @@
                         </svg>
                     </span>
                     <span class="link-text">Orders</span>
-                    @if(request()->routeIs('admin.orders'))
+                    <?php if(request()->routeIs('admin.orders')): ?>
                         <div class="active-indicator"></div>
-                    @endif
+                    <?php endif; ?>
                 </a>
 
-                <a href="{{ route('admin.inquiries') }}" class="sidebar-link {{ request()->routeIs('admin.inquiries*') ? 'active' : '' }}">
+                <a href="<?php echo e(route('admin.inquiries')); ?>" class="sidebar-link <?php echo e(request()->routeIs('admin.inquiries*') ? 'active' : ''); ?>">
                     <span class="link-icon">
                         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
@@ -128,16 +128,16 @@
                     </span>
                     <span class="link-text" style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
                         <span>Inquiries</span>
-                        @if(!empty($unreadInquiriesCount) && $unreadInquiriesCount > 0)
-                            <span class="sidebar-badge" style="background: #ef4444; color: #fff; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 9999px; line-height: 1.4;">{{ $unreadInquiriesCount }}</span>
-                        @endif
+                        <?php if(!empty($unreadInquiriesCount) && $unreadInquiriesCount > 0): ?>
+                            <span class="sidebar-badge" style="background: #ef4444; color: #fff; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 9999px; line-height: 1.4;"><?php echo e($unreadInquiriesCount); ?></span>
+                        <?php endif; ?>
                     </span>
-                    @if(request()->routeIs('admin.inquiries*'))
+                    <?php if(request()->routeIs('admin.inquiries*')): ?>
                         <div class="active-indicator"></div>
-                    @endif
+                    <?php endif; ?>
                 </a>
 
-                <a href="{{ route('admin.users') }}" class="sidebar-link {{ request()->routeIs('admin.users') ? 'active' : '' }}">
+                <a href="<?php echo e(route('admin.users')); ?>" class="sidebar-link <?php echo e(request()->routeIs('admin.users') ? 'active' : ''); ?>">
                     <span class="link-icon">
                         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
@@ -147,14 +147,14 @@
                         </svg>
                     </span>
                     <span class="link-text">Users</span>
-                    @if(request()->routeIs('admin.users'))
+                    <?php if(request()->routeIs('admin.users')): ?>
                         <div class="active-indicator"></div>
-                    @endif
+                    <?php endif; ?>
                 </a>
             </nav>
 
             <div class="sidebar-footer">
-                <a href="{{ route('home') }}" class="back-to-site">
+                <a href="<?php echo e(route('home')); ?>" class="back-to-site">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="19" y1="12" x2="5" y2="12"></line>
                         <polyline points="12 19 5 12 12 5"></polyline>
@@ -170,13 +170,13 @@
             <header class="admin-header admin-header-premium">
                 <div class="header-info">
                     <p class="admin-header-eyebrow">Leede Fusion Admin</p>
-                    <h1 class="page-title admin-header-title">@yield('page_title', 'Dashboard')</h1>
-                    <p class="admin-header-meta">@yield('page_subtitle', 'Overview and live store activity')</p>
+                    <h1 class="page-title admin-header-title"><?php echo $__env->yieldContent('page_title', 'Dashboard'); ?></h1>
+                    <p class="admin-header-meta"><?php echo $__env->yieldContent('page_subtitle', 'Overview and live store activity'); ?></p>
                 </div>
 
                 <div class="admin-user-profile admin-header-user">
                     <div class="admin-user-text">
-                        <span class="admin-name" x-text="$store.auth.user?.name || '{{ auth()->user()->name ?? 'Leede Fusion Admin' }}'"></span>
+                        <span class="admin-name" x-text="$store.auth.user?.name || '<?php echo e(auth()->user()->name ?? 'Leede Fusion Admin'); ?>'"></span>
                         <div class="admin-user-actions">
                             <span class="admin-role-badge">Admin</span>
                             <button type="button" @click="logout()" class="admin-logout-btn">
@@ -184,15 +184,16 @@
                             </button>
                         </div>
                     </div>
-                    <div class="admin-avatar" aria-hidden="true" x-text="($store.auth.user?.name || '{{ auth()->user()->name ?? 'L' }}').slice(0, 1).toUpperCase()">
-                        {{ substr(auth()->user()->name ?? 'L', 0, 1) }}
+                    <div class="admin-avatar" aria-hidden="true" x-text="($store.auth.user?.name || '<?php echo e(auth()->user()->name ?? 'L'); ?>').slice(0, 1).toUpperCase()">
+                        <?php echo e(substr(auth()->user()->name ?? 'L', 0, 1)); ?>
+
                     </div>
                 </div>
             </header>
 
             <!-- Scrollable Page Content -->
             <div class="admin-content-scroll">
-                @yield('content')
+                <?php echo $__env->yieldContent('content'); ?>
             </div>
 
             <!-- Leede Fusion Brand Watermark on Bottom Right -->
@@ -200,6 +201,7 @@
         </main>
     </div>
 
-    @stack('scripts')
+    <?php echo $__env->yieldPushContent('scripts'); ?>
 </body>
 </html>
+<?php /**PATH /Users/mac/Documents/GitHub/Leede-Fusion/resources/views/layouts/admin.blade.php ENDPATH**/ ?>

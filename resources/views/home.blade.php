@@ -13,6 +13,7 @@
         @include('sections.product-focus')
         @include('sections.why-shop', ['whyShop' => $whyShop])
         @include('sections.location-map', ['project' => $project])
+        @include('sections.blog', ['blogPosts' => $blogPosts])
         @include('partials.footer')
     </main>
 @endsection
