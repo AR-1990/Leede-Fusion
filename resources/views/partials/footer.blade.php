@@ -1,7 +1,10 @@
 <footer class="main-footer">
     <div class="footer-top">
         <div class="footer-brand-column reveal reveal-fade-up">
-            <div class="footer-logo">Leede</div>
+            <div class="footer-logo">
+                <img src="{{ asset('Logo.png') }}" alt="Leedee Fusion logo">
+                <span>Leedee Fusion</span>
+            </div>
             <p class="footer-tagline">
                 Premium retail clothing and accessories based in Karachi.
                 Providing quality fabrics and elegant suits since our inception.
@@ -44,7 +47,7 @@
             <span>Cookies</span>
         </div>
         <div class="footer-copyright">
-            © {{ date('Y') }} Leede. ALL RIGHTS RESERVED.
+            © {{ date('Y') }} Leedee Fusion. ALL RIGHTS RESERVED.
         </div>
     </div>
 </footer>

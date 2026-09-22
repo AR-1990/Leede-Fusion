@@ -3,9 +3,8 @@
      :style="leaving ? 'transform: translateY(-100%)' : ''">
     <div class="preloader-content">
         <h1 class="preloader-logo">
-            @foreach(str_split('LEEDE') as $char)
-                <span>{!! $char === ' ' ? '&nbsp;' : e($char) !!}</span>
-            @endforeach
+            <img src="{{ asset('Logo.png') }}" alt="Leedee Fusion logo">
+            <span>LEEDEE FUSION</span>
         </h1>
         <div class="preloader-counter">
             <span class="counter-number" x-text="count"></span>

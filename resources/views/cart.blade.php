@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Shopping Cart | Leede')
+@section('title', 'Shopping Cart | Leedee Fusion')
 
 @section('content')
     @include('partials.navbar')

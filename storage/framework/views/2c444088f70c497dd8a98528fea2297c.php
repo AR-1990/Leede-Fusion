@@ -3,9 +3,8 @@
      :style="leaving ? 'transform: translateY(-100%)' : ''">
     <div class="preloader-content">
         <h1 class="preloader-logo">
-            <?php $__currentLoopData = str_split('LEEDE'); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $char): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                <span><?php echo $char === ' ' ? '&nbsp;' : e($char); ?></span>
-            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+            <img src="<?php echo e(asset('Logo.png')); ?>" alt="Leedee Fusion logo">
+            <span>LEEDEE FUSION</span>
         </h1>
         <div class="preloader-counter">
             <span class="counter-number" x-text="count"></span>

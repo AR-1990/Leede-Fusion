@@ -27,7 +27,10 @@
 <header class="navbar-sticky-wrapper" x-data="navbar()">
 
     <nav class="navbar">
-        <a href="{{ route('home') }}" class="navbar-logo">Leede</a>
+        <a href="{{ route('home') }}" class="navbar-logo">
+            <img src="{{ asset('Logo.png') }}" alt="Leedee Fusion logo">
+            <span>Leedee Fusion</span>
+        </a>
 
         <div class="navbar-links desktop-only">
             <a href="{{ route('home') }}">Home</a>

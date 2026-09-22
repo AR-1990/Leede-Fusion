@@ -110,12 +110,25 @@ a {
 }
 
 .navbar-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+}
+
+.navbar-logo img {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.navbar-logo span {
   font-family: var(--font-heading);
   font-size: 32px;
   letter-spacing: 0.05em;
   color: #111111;
   font-weight: 700;
-  text-decoration: none;
 }
 
 .navbar-links {
@@ -912,9 +925,22 @@ a {
 }
 
 .footer-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.footer-logo img {
+  width: 52px;
+  height: 52px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.footer-logo span {
   font-family: var(--font-heading);
   font-size: 48px;
-  margin-bottom: 20px;
 }
 
 .footer-tagline {
@@ -3000,12 +3026,45 @@ a {
 }
 
 .auth-logo {
-  font-family: var(--font-heading);
-  font-size: 24px;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
   color: #111;
   text-decoration: none;
   margin-bottom: 40px;
-  display: block;
+}
+
+.auth-logo img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.auth-logo span {
+  font-family: var(--font-heading);
+  font-size: 24px;
+}
+
+.preloader-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.preloader-logo img {
+  width: 54px;
+  height: 54px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.preloader-logo span {
+  font-family: var(--font-heading);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-size: 40px;
+  font-weight: 400;
 }
 
 .auth-title {
@@ -4018,4 +4077,3 @@ body:has(.admin-layout) .floating-whatsapp-btn-wrapper {
     animation: none !important;
   }
 }
-

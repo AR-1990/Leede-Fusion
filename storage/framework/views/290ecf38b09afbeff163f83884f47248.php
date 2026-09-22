@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
-    <title><?php echo $__env->yieldContent('title', 'Leede | Premium Fashion'); ?></title>
+    <title><?php echo $__env->yieldContent('title', 'Leedee Fusion | Premium Fashion'); ?></title>
     <meta name="description" content="<?php echo $__env->yieldContent('description', 'Community-driven streetwear and lifestyle brand.'); ?>">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Our Story | Leede')
+@section('title', 'Our Story | Leedee Fusion')
 
 @section('content')
     @include('partials.navbar')
@@ -18,7 +18,7 @@
             <div class="story-text reveal reveal-slide-left">
                 <h2>THE GENESIS</h2>
                 <p>
-                    Founded with a passion for exceptional textiles, Leede represents the intersection
+                    Founded with a passion for exceptional textiles, Leedee Fusion represents the intersection
                     of heritage craftsmanship and contemporary streetwear aesthetics.
                 </p>
                 <p>
@@ -42,7 +42,7 @@
                 <p>
                     We believe style should be effortless yet distinguished. Whether it's our signature
                     unstitched fabrics for traditional celebrations or our relaxed oversized silhouettes,
-                    Leede brings a new standard of accessible luxury.
+                    Leedee Fusion brings a new standard of accessible luxury.
                 </p>
                 <a href="{{ url('/collections') }}" class="shop-now-btn" style="display: inline-block; margin-top: 20px;">
                     Explore Collections <span>→</span>

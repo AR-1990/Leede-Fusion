@@ -2,7 +2,7 @@
 
 return [
     'project' => [
-        'name' => 'Leede',
+        'name' => 'Leedee Fusion',
         'owner' => 'Intizar Wahla',
         'phone' => '03066978156',
         'email' => 'leede@gmail.com',
@@ -17,7 +17,7 @@ return [
         [
             'id' => 1,
             'title' => 'ELEGANCE IN EVERY THREAD',
-            'description' => 'Discover the premium collection at Leede. From traditional washing ware to modern lawn.',
+            'description' => 'Discover the premium collection at Leedee Fusion. From traditional washing ware to modern lawn.',
             'image' => '/1.jpg',
         ],
         [

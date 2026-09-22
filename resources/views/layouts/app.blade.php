@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Leede | Premium Fashion')</title>
+    <title>@yield('title', 'Leedee Fusion | Premium Fashion')</title>
     <meta name="description" content="@yield('description', 'Community-driven streetwear and lifestyle brand.')">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">

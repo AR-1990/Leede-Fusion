@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>@yield('title', 'Dashboard') | Leede Admin</title>
+    <title>@yield('title', 'Dashboard') | Leedee Fusion Admin</title>
 
     <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -55,7 +55,8 @@
         <aside class="admin-sidebar">
             <div class="sidebar-brand">
                 <a href="{{ route('admin.dashboard') }}" class="sidebar-brand-link">
-                    <span class="brand-name">Leede</span>
+                    <img src="{{ asset('Logo.png') }}" alt="Leedee Fusion logo" class="brand-logo-image">
+                    <span class="brand-name">Leedee Fusion</span>
                     <span class="brand-badge">Admin</span>
                 </a>
             </div>
@@ -149,14 +150,14 @@
             <!-- Header Bar -->
             <header class="admin-header admin-header-premium">
                 <div class="header-info">
-                    <p class="admin-header-eyebrow">Leede Admin</p>
+                    <p class="admin-header-eyebrow">Leedee Fusion Admin</p>
                     <h1 class="page-title admin-header-title">@yield('page_title', 'Dashboard')</h1>
                     <p class="admin-header-meta">@yield('page_subtitle', 'Overview and live store activity')</p>
                 </div>
 
                 <div class="admin-user-profile admin-header-user">
                     <div class="admin-user-text">
-                        <span class="admin-name" x-text="$store.auth.user?.name || '{{ auth()->user()->name ?? 'Leede Admin' }}'"></span>
+                        <span class="admin-name" x-text="$store.auth.user?.name || '{{ auth()->user()->name ?? 'Leedee Fusion Admin' }}'"></span>
                         <div class="admin-user-actions">
                             <span class="admin-role-badge">Admin</span>
                             <button type="button" @click="logout()" class="admin-logout-btn">
@@ -175,8 +176,8 @@
                 @yield('content')
             </div>
 
-            <!-- Leede Brand Watermark on Bottom Right -->
-            <div class="main-bottom-brand" aria-hidden="true">Leede</div>
+            <!-- Leedee Fusion Brand Watermark on Bottom Right -->
+            <div class="main-bottom-brand" aria-hidden="true">Leedee Fusion</div>
         </main>
     </div>
 

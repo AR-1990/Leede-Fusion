@@ -17,7 +17,7 @@
             style="border: 0;"
             allowfullscreen
             loading="lazy"
-            title="Leede Location"
+            title="Leedee Fusion Location"
             @load="mapLoaded = true"
         ></iframe>
     </div>

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Leede | Premium Fashion')
+@section('title', 'Leedee Fusion | Premium Fashion')
 
 @section('content')
     @include('partials.navbar')
