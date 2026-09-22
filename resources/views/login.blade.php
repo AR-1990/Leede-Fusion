@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Sign In / Register | Leedee Fusion')
+@section('title', 'Sign In / Register | Leede Fusion')
 
 @section('body_class', 'auth-page-body')
 
@@ -160,7 +160,7 @@
                     $store.auth.user = data.user;
                     $store.auth.token = token;
                     $store.auth.persist();
-                    this.success = `Account created successfully! Welcome to Leedee Fusion, ${data.user.name}. Redirecting...`;
+                    this.success = `Account created successfully! Welcome to Leede Fusion, ${data.user.name}. Redirecting...`;
                     setTimeout(() => {
                         window.location.href = '/';
                     }, 1200);
@@ -176,14 +176,14 @@
         }
     }">
         <div class="auth-container">
-            <div class="auth-watermark">LEEDEE FUSION</div>
+            <div class="auth-watermark">LEEDE FUSION</div>
             <div class="auth-card reveal reveal-fade-up">
                 <a href="{{ route('home') }}" class="auth-logo">
-                    <img src="{{ asset('Logo.png') }}" alt="Leedee Fusion logo">
-                    <span>LEEDEE FUSION</span>
+                    <img src="{{ asset('Logo.png') }}" alt="Leede Fusion logo">
+                    <span><span class="brand-word-primary">LEEDE</span> <span class="brand-word-secondary">FUSION</span></span>
                 </a>
                 
-                <h1 class="auth-title" x-text="mode === 'register' ? 'JOIN LEEDEE FUSION' : 'WELCOME BACK'"></h1>
+                <h1 class="auth-title" x-text="mode === 'register' ? 'JOIN LEEDE FUSION' : 'WELCOME BACK'"></h1>
                 <p class="auth-subtitle" x-text="mode === 'register' ? 'Create your account to unlock bespoke tailoring & new drops' : 'Enter your credentials to access your account'"></p>
 
                 <!-- Navigation Tabs -->

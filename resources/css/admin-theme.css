@@ -1,5 +1,5 @@
 /* ==========================================================================
-   LEEDEE FUSION ADMIN - MODERN PROFESSIONAL SUITE THEME
+   LEEDE FUSION ADMIN - MODERN PROFESSIONAL SUITE THEME
    - Architecture: Clean Human Modernism, Soft Contrast, Human Typography
    - NO AI look: No shouting uppercase, no heavy bold condensed fonts
    - NO gradients, NO glow, NO green dots, NO emojis
@@ -110,6 +110,11 @@ body {
   font-weight: 600;
   color: #ffffff;
   letter-spacing: -0.01em;
+}
+
+.sidebar-brand-link .brand-name .brand-word-secondary {
+  opacity: 0.62;
+  font-weight: 400;
 }
 
 .sidebar-brand-link .brand-badge {

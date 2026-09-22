@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', ($selectedCategory ? $selectedCategory->name . ' - ' : '') . 'Collections | Leedee Fusion')
+@section('title', ($selectedCategory ? $selectedCategory->name . ' - ' : '') . 'Collections | Leede Fusion')
 
 @section('content')
     @include('partials.navbar')

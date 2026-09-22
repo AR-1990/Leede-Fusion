@@ -131,6 +131,12 @@ a {
   font-weight: 700;
 }
 
+.navbar-logo .brand-word-secondary,
+.auth-logo .brand-word-secondary {
+  opacity: 0.5;
+  font-weight: 400;
+}
+
 .navbar-links {
   display: flex;
   gap: 30px;
@@ -941,6 +947,12 @@ a {
 .footer-logo span {
   font-family: var(--font-heading);
   font-size: 48px;
+}
+
+.footer-logo .brand-word-secondary,
+.preloader-logo .brand-word-secondary {
+  opacity: 0.58;
+  font-weight: 400;
 }
 
 .footer-tagline {

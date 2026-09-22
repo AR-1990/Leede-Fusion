@@ -3,8 +3,8 @@
      :style="leaving ? 'transform: translateY(-100%)' : ''">
     <div class="preloader-content">
         <h1 class="preloader-logo">
-            <img src="<?php echo e(asset('Logo.png')); ?>" alt="Leedee Fusion logo">
-            <span>LEEDEE FUSION</span>
+            <img src="<?php echo e(asset('Logo.png')); ?>" alt="Leede Fusion logo">
+            <span><span class="brand-word-primary">LEEDE</span> <span class="brand-word-secondary">FUSION</span></span>
         </h1>
         <div class="preloader-counter">
             <span class="counter-number" x-text="count"></span>

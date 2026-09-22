@@ -26,7 +26,7 @@
                 id: {{ $product->id }},
                 name: @js($product->name),
                 price: @js($product->price),
-                description: @js($product->description ?? 'Premium quality from Leedee Fusion.'),
+                description: @js($product->description ?? 'Premium quality from Leede Fusion.'),
                 image: @js($image),
                 images: @js($gallery),
                 category: @js($categoryLabel),

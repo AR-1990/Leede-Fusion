@@ -2,7 +2,7 @@
     <div class="footer-top">
         <div class="footer-brand-column reveal reveal-fade-up">
             <div class="footer-logo">
-                <img src="{{ asset('Logo.png') }}" alt="Leede Fusion logo">
+                <img src="<?php echo e(asset('Logo.png')); ?>" alt="Leede Fusion logo">
                 <span><span class="brand-word-primary">Leede</span> <span class="brand-word-secondary">Fusion</span></span>
             </div>
             <p class="footer-tagline">
@@ -10,7 +10,7 @@
                 Providing quality fabrics and elegant suits since our inception.
             </p>
             <div class="footer-socials">
-                <a href="{{ config('content.project.whatsapp_link') }}">WA</a>
+                <a href="<?php echo e(config('content.project.whatsapp_link')); ?>">WA</a>
                 <a href="#">IG</a>
                 <a href="#">FB</a>
             </div>
@@ -18,24 +18,24 @@
 
         <div class="footer-links-column reveal reveal-fade-up delay-100">
             <h4 class="footer-label">Collections</h4>
-            <a href="{{ url('/collections') }}">Men's Fabric</a>
-            <a href="{{ url('/collections') }}">Women's Suits</a>
-            <a href="{{ url('/collections') }}">Kids Wear</a>
-            <a href="{{ url('/collections') }}">Accessories</a>
+            <a href="<?php echo e(url('/collections')); ?>">Men's Fabric</a>
+            <a href="<?php echo e(url('/collections')); ?>">Women's Suits</a>
+            <a href="<?php echo e(url('/collections')); ?>">Kids Wear</a>
+            <a href="<?php echo e(url('/collections')); ?>">Accessories</a>
         </div>
 
         <div class="footer-links-column reveal reveal-fade-up delay-200">
             <h4 class="footer-label">Info</h4>
-            <a href="{{ url('/story') }}">Our Story</a>
+            <a href="<?php echo e(url('/story')); ?>">Our Story</a>
             <a href="#contact">Contact Us</a>
             <a href="#contact">Location</a>
         </div>
 
         <div class="footer-contact-column reveal reveal-fade-up delay-300">
             <h4 class="footer-label">Contact Details</h4>
-            <p>{{ config('content.project.location') }}</p>
+            <p><?php echo e(config('content.project.location')); ?></p>
             <p>WhatsApp: 0306 6978156</p>
-            <p>Email: {{ config('content.project.email') }}</p>
+            <p>Email: <?php echo e(config('content.project.email')); ?></p>
             <p>Hours: 9:00 AM – 9:00 PM</p>
         </div>
     </div>
@@ -47,7 +47,8 @@
             <span>Cookies</span>
         </div>
         <div class="footer-copyright">
-            © {{ date('Y') }} Leede Fusion. ALL RIGHTS RESERVED.
+            © <?php echo e(date('Y')); ?> Leede Fusion. ALL RIGHTS RESERVED.
         </div>
     </div>
 </footer>
+<?php /**PATH C:\Users\AR\Desktop\Leede-Fusion\resources\views/partials/footer.blade.php ENDPATH**/ ?>

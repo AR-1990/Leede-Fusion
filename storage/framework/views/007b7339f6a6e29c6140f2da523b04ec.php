@@ -25,7 +25,7 @@
     <div class="location-details reveal reveal-fade-up delay-250">
         <div class="detail-item">
             <h3>ADDRESS</h3>
-            <p>{{ $project['location'] }}</p>
+            <p><?php echo e($project['location']); ?></p>
         </div>
         <div class="detail-item">
             <h3>HOURS</h3>
@@ -33,7 +33,8 @@
         </div>
         <div class="detail-item">
             <h3>CONTACT</h3>
-            <p>0306 6978156<br>{{ $project['email'] }}</p>
+            <p>0306 6978156<br><?php echo e($project['email']); ?></p>
         </div>
     </div>
 </section>
+<?php /**PATH C:\Users\AR\Desktop\Leede-Fusion\resources\views/sections/location-map.blade.php ENDPATH**/ ?>
