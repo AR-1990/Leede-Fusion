@@ -1,18 +1,31 @@
-<section id="collections" class="section-container" x-data="featuredScroll()">
+<section id="collections" class="section-container featured-editorial-section" x-data="featuredScroll()">
+    <!-- Section Header -->
     <div class="section-header">
         <div class="title-wrapper reveal reveal-fade-up">
-            <span class="section-subtitle">SUMMER 2024</span>
-            <h2 class="section-title">FEATURED DROPS</h2>
+            <span class="section-subtitle">CURATED DROPS &amp; ATELIER PIECES</span>
+            <h2 class="section-title">SIGNATURE READY COLLECTIONS</h2>
             <p class="section-description">
-                Discover our most exclusive retail pieces, curated for elegance and durability.
+                Handcrafted in limited runs. Available as ready-to-wear pieces or custom-tailored to your exact measurements.
             </p>
         </div>
         <div class="section-nav reveal reveal-fade-up delay-150">
-            <button type="button" class="nav-arrow prev" @click="scroll('left')">←</button>
-            <button type="button" class="nav-arrow next" @click="scroll('right')">→</button>
+            <button type="button" class="nav-arrow prev" @click="scroll('left')" aria-label="Previous products">←</button>
+            <button type="button" class="nav-arrow next" @click="scroll('right')" aria-label="Next products">→</button>
         </div>
     </div>
 
+    <!-- Atelier Bespoke Sizing Ribbon Banner -->
+    <div class="atelier-product-ribbon reveal reveal-fade-up delay-100">
+        <div class="ribbon-content">
+            <span class="ribbon-badge">BESPOKE OPTION</span>
+            <span class="ribbon-text">Every design below can be customized to your precise height, sleeve, &amp; body measurements.</span>
+        </div>
+        <a href="<?php echo e(route('contact')); ?>?inquiry=Custom+Stitching" class="ribbon-link">
+            <span>REQUEST CUSTOM FIT &rarr;</span>
+        </a>
+    </div>
+
+    <!-- Products Scroll Grid -->
     <div class="products-grid" x-ref="scroller">
         <?php $__empty_1 = true; $__currentLoopData = $products; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $product): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
             <?php echo $__env->make('partials.product-card', [

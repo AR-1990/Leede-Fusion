@@ -33,7 +33,9 @@
         </a>
 
         <div class="navbar-links desktop-only">
-            <a href="{{ route('home') }}">Home</a>
+            <a href="{{ route('the-house') }}">The House</a>
+            <a href="{{ route('the-atelier') }}">The Atelier</a>
+            <a href="{{ route('the-process') }}">The Process</a>
             <div class="navbar-collections" @click.outside="collectionsOpen = false">
                 <button type="button" class="navbar-link-button navbar-collections-trigger" :class="{ 'is-active': collectionsOpen }" @click="toggleCollections()">
                     <span>Collections</span>
@@ -46,9 +48,9 @@
                     <div class="collections-dropdown-head">
                         <div>
                             <p class="collections-dropdown-label">Shop by Category</p>
-                            <p class="collections-dropdown-copy">Browse only the products from the category you want.</p>
+                            <p class="collections-dropdown-copy">Browse our in-house ready-to-wear pieces and fabrics.</p>
                         </div>
-                        <a href="{{ url('/collections') }}" class="collections-dropdown-all" @click="collectionsOpen = false">View All</a>
+                        <a href="{{ url('/collections') }}" class="collections-dropdown-all" @click="collectionsOpen = false">View All Collections &rarr;</a>
                     </div>
 
                     @if(!empty($navCategories))
@@ -66,8 +68,10 @@
                     @endif
                 </div>
             </div>
-            <a href="{{ url('/story') }}">Our Story</a>
-            <a href="{{ url('/#contact') }}">Contact</a>
+            <a href="{{ route('contact') }}?inquiry=Custom+Stitching">
+                <span class="nav-highlight-link">Custom Design</span>
+            </a>
+            <a href="{{ route('contact') }}">Contact</a>
         </div>
 
         <div class="navbar-actions">
@@ -123,6 +127,8 @@
     <div class="mobile-menu" x-show="menuOpen" x-cloak x-transition:enter.opacity.duration.300ms>
         <div class="mobile-menu-links">
             <a href="{{ route('home') }}" @click="closeMenus()">Home</a>
+            <a href="{{ route('the-house') }}" @click="closeMenus()">The House</a>
+            <a href="{{ route('the-atelier') }}" @click="closeMenus()">The Atelier</a>
             <div class="mobile-collections">
                 <button type="button" class="mobile-collections-trigger" @click="toggleMobileCollections()">
                     <span>Collections</span>
@@ -138,19 +144,21 @@
                             <span class="mobile-collection-count">{{ $category['count'] }} {{ \Illuminate\Support\Str::plural('piece', $category['count']) }}</span>
                         </a>
                     @endforeach
-                    <a href="{{ url('/collections') }}" class="mobile-collection-link mobile-collection-all" @click="closeMenus()">View All Collections</a>
+                    <a href="{{ url('/collections') }}" class="mobile-collection-link mobile-collection-all" @click="closeMenus()">View All Collections &rarr;</a>
                 </div>
             </div>
-            <a href="{{ url('/story') }}" @click="closeMenus()">Our Story</a>
-            <a href="{{ url('/#contact') }}" @click="closeMenus()">Contact</a>
+            <a href="{{ route('contact') }}?inquiry=Custom+Stitching" @click="closeMenus()">
+                Custom Design &amp; Stitching
+            </a>
+            <a href="{{ route('contact') }}" @click="closeMenus()">Contact Us</a>
 
             <template x-if="$store.auth.isAuthenticated">
                 <div>
                     <template x-if="$store.auth.isAdmin">
                         <a href="{{ url('/admin') }}" style="font-weight: 700; color: #111;" @click="closeMenus()">Admin Dashboard</a>
                     </template>
-                    <a href="{{ url('/profile') }}" @click="closeMenus()">My profile</a>
-                    <a href="{{ url('/orders') }}" @click="closeMenus()">My orders</a>
+                    <a href="{{ url('/profile') }}" @click="closeMenus()">My Profile</a>
+                    <a href="{{ url('/orders') }}" @click="closeMenus()">My Orders</a>
                     <button type="button" class="mobile-auth-btn" @click="$store.auth.logout(); closeMenus()">Logout</button>
                 </div>
             </template>

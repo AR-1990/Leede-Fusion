@@ -192,6 +192,12 @@ window.preloader = function preloader() {
         count: 0,
         visible: true,
         leaving: false,
+        get statusText() {
+            if (this.count < 30) return 'INITIALIZING ATELIER STUDIO...';
+            if (this.count < 65) return 'CURATING PURE SILKS & CREPE...';
+            if (this.count < 90) return 'CALIBRATING BESPOKE MEASUREMENTS...';
+            return 'WELCOME TO LEEDE FUSION';
+        },
         init() {
             const timer = setInterval(() => {
                 if (this.count >= 100) {
@@ -204,31 +210,46 @@ window.preloader = function preloader() {
                             if (typeof window.initScrollReveal === 'function') {
                                 window.initScrollReveal();
                             }
-                        }, 800);
-                    }, 400);
+                        }, 700);
+                    }, 350);
                     return;
                 }
-                this.count += 2;
-            }, 20);
+                this.count += (this.count < 80 ? 2.5 : 4);
+                if (this.count > 100) this.count = 100;
+            }, 25);
         },
     };
 };
 
+window.triggerCustomDesign = function triggerCustomDesign(type = 'Custom Stitching / Sizing') {
+    const contactSection = document.getElementById('contact');
+    if (contactSection) {
+        window.dispatchEvent(new CustomEvent('select-inquiry-type', { detail: { type } }));
+        contactSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
+        window.location.href = `/?design=1#contact`;
+    }
+};
+
 window.heroSlider = function heroSlider(slides) {
-    const duration = 5000;
+    const duration = 6000;
     return {
-        slides,
+        slides: slides || [],
         current: 0,
         startedAt: Date.now(),
         timer: null,
+        isPaused: false,
         get titleHtml() {
             const title = this.slides[this.current]?.title || '';
             return title.replace(', ', ',<br />');
         },
         init() {
+            if (!this.slides || !this.slides.length) return;
             this.slides.forEach((slide) => {
-                const img = new Image();
-                img.src = slide.image;
+                if (slide.image) {
+                    const img = new Image();
+                    img.src = slide.image;
+                }
             });
             this.start();
         },
@@ -236,13 +257,49 @@ window.heroSlider = function heroSlider(slides) {
             clearInterval(this.timer);
             this.startedAt = Date.now();
             this.timer = setInterval(() => {
-                this.current = (this.current + 1) % this.slides.length;
-                this.startedAt = Date.now();
+                if (!this.isPaused && this.slides.length > 1) {
+                    this.current = (this.current + 1) % this.slides.length;
+                    this.startedAt = Date.now();
+                }
             }, duration);
+        },
+        pause() {
+            this.isPaused = true;
+        },
+        resume() {
+            this.isPaused = false;
+        },
+        next() {
+            if (!this.slides.length) return;
+            this.current = (this.current + 1) % this.slides.length;
+            this.start();
+        },
+        prev() {
+            if (!this.slides.length) return;
+            this.current = (this.current - 1 + this.slides.length) % this.slides.length;
+            this.start();
         },
         goTo(index) {
             this.current = index;
             this.start();
+        },
+        handlePrimaryCta(slide) {
+            if (!slide) return;
+            if (slide.primary_btn_action === 'custom-design' || (slide.primary_btn_text && slide.primary_btn_text.toLowerCase().includes('design'))) {
+                window.triggerCustomDesign('Custom Stitching / Sizing');
+            } else if (slide.primary_btn_url) {
+                window.location.href = slide.primary_btn_url;
+            } else {
+                window.triggerCustomDesign('Custom Stitching / Sizing');
+            }
+        },
+        handleSecondaryCta(event, slide) {
+            if (!slide) return;
+            if (slide.secondary_btn_action === 'custom-design') {
+                event.preventDefault();
+                window.triggerCustomDesign('Custom Stitching / Sizing');
+            }
+            // Otherwise default link href executes naturally
         },
         barStyle(index) {
             if (index < this.current) return { width: '100%' };
