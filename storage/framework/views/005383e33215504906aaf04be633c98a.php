@@ -24,7 +24,7 @@
     </div>
 </div>
 
-<header class="navbar-sticky-wrapper" x-data="navbar()">
+<header class="navbar-sticky-wrapper" x-data="navbar()" @keydown.escape.window="closeMenus()">
 
     <nav class="navbar">
         <a href="<?php echo e(route('home')); ?>" class="navbar-logo">
@@ -34,11 +34,38 @@
 
         <div class="navbar-links desktop-only">
             <a href="<?php echo e(route('home')); ?>">Home</a>
-            <a href="<?php echo e(url('/collections')); ?>">Collections</a>
-            <a href="#all-collections">Men</a>
-            <a href="#all-collections">Women</a>
-            <a href="#categories">Kids</a>
-            <a href="#categories">Accessories</a>
+            <div class="navbar-collections" @click.outside="collectionsOpen = false">
+                <button type="button" class="navbar-link-button navbar-collections-trigger" :class="{ 'is-active': collectionsOpen }" @click="toggleCollections()">
+                    <span>Collections</span>
+                    <svg class="collections-trigger-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="m6 9 6 6 6-6"></path>
+                    </svg>
+                </button>
+
+                <div class="collections-dropdown" x-show="collectionsOpen" x-cloak x-transition.opacity.duration.200ms>
+                    <div class="collections-dropdown-head">
+                        <div>
+                            <p class="collections-dropdown-label">Shop by Category</p>
+                            <p class="collections-dropdown-copy">Browse only the products from the category you want.</p>
+                        </div>
+                        <a href="<?php echo e(url('/collections')); ?>" class="collections-dropdown-all" @click="collectionsOpen = false">View All</a>
+                    </div>
+
+                    <?php if(!empty($navCategories)): ?>
+                        <div class="collections-dropdown-grid">
+                            <?php $__currentLoopData = $navCategories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $category): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <a href="<?php echo e($category['url']); ?>" class="collections-dropdown-link" @click="collectionsOpen = false">
+                                    <span class="collections-dropdown-title"><?php echo e($category['name']); ?></span>
+                                    <span class="collections-dropdown-description"><?php echo e($category['description'] ?: 'Browse this collection'); ?></span>
+                                    <span class="collections-dropdown-count"><?php echo e($category['count']); ?> <?php echo e(\Illuminate\Support\Str::plural('piece', $category['count'])); ?></span>
+                                </a>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        </div>
+                    <?php else: ?>
+                        <p class="collections-dropdown-empty">No categories found yet.</p>
+                    <?php endif; ?>
+                </div>
+            </div>
             <a href="<?php echo e(url('/story')); ?>">Our Story</a>
             <a href="<?php echo e(url('/#contact')); ?>">Contact</a>
         </div>
@@ -84,7 +111,7 @@
                 </div>
             </div>
 
-            <button type="button" class="menu-toggle mobile-only" @click="menuOpen = !menuOpen" aria-label="Toggle menu">
+            <button type="button" class="menu-toggle mobile-only" @click="toggleMenu()" aria-label="Toggle menu">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path x-show="!menuOpen" d="M3 12h18M3 6h18M3 18h18"></path>
                     <path x-show="menuOpen" d="M18 6L6 18M6 6l12 12"></path>
@@ -95,30 +122,43 @@
 
     <div class="mobile-menu" x-show="menuOpen" x-cloak x-transition:enter.opacity.duration.300ms>
         <div class="mobile-menu-links">
-            <a href="<?php echo e(route('home')); ?>" @click="menuOpen = false">Home</a>
-            <a href="<?php echo e(url('/collections')); ?>" @click="menuOpen = false">Collections</a>
-            <a href="#all-collections" @click="menuOpen = false">Men</a>
-            <a href="#all-collections" @click="menuOpen = false">Women</a>
-            <a href="#categories" @click="menuOpen = false">Kids</a>
-            <a href="#categories" @click="menuOpen = false">Accessories</a>
-            <a href="<?php echo e(url('/story')); ?>" @click="menuOpen = false">Our Story</a>
-            <a href="<?php echo e(url('/#contact')); ?>" @click="menuOpen = false">Contact</a>
+            <a href="<?php echo e(route('home')); ?>" @click="closeMenus()">Home</a>
+            <div class="mobile-collections">
+                <button type="button" class="mobile-collections-trigger" @click="toggleMobileCollections()">
+                    <span>Collections</span>
+                    <svg class="mobile-collections-icon" :class="{ 'is-open': mobileCollectionsOpen }" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="m6 9 6 6 6-6"></path>
+                    </svg>
+                </button>
+
+                <div class="mobile-collections-panel" x-show="mobileCollectionsOpen" x-cloak x-transition.opacity.duration.200ms>
+                    <?php $__currentLoopData = ($navCategories ?? []); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $category): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <a href="<?php echo e($category['url']); ?>" class="mobile-collection-link" @click="closeMenus()">
+                            <span class="mobile-collection-title"><?php echo e($category['name']); ?></span>
+                            <span class="mobile-collection-count"><?php echo e($category['count']); ?> <?php echo e(\Illuminate\Support\Str::plural('piece', $category['count'])); ?></span>
+                        </a>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                    <a href="<?php echo e(url('/collections')); ?>" class="mobile-collection-link mobile-collection-all" @click="closeMenus()">View All Collections</a>
+                </div>
+            </div>
+            <a href="<?php echo e(url('/story')); ?>" @click="closeMenus()">Our Story</a>
+            <a href="<?php echo e(url('/#contact')); ?>" @click="closeMenus()">Contact</a>
 
             <template x-if="$store.auth.isAuthenticated">
                 <div>
                     <template x-if="$store.auth.isAdmin">
-                        <a href="<?php echo e(url('/admin')); ?>" style="font-weight: 700; color: #111;" @click="menuOpen = false">Admin Dashboard</a>
+                        <a href="<?php echo e(url('/admin')); ?>" style="font-weight: 700; color: #111;" @click="closeMenus()">Admin Dashboard</a>
                     </template>
-                    <a href="<?php echo e(url('/profile')); ?>" @click="menuOpen = false">My profile</a>
-                    <a href="<?php echo e(url('/orders')); ?>" @click="menuOpen = false">My orders</a>
-                    <button type="button" class="mobile-auth-btn" @click="$store.auth.logout(); menuOpen = false">Logout</button>
+                    <a href="<?php echo e(url('/profile')); ?>" @click="closeMenus()">My profile</a>
+                    <a href="<?php echo e(url('/orders')); ?>" @click="closeMenus()">My orders</a>
+                    <button type="button" class="mobile-auth-btn" @click="$store.auth.logout(); closeMenus()">Logout</button>
                 </div>
             </template>
             <template x-if="!$store.auth.isAuthenticated">
-                <a href="<?php echo e(url('/login')); ?>" @click="menuOpen = false" class="mobile-auth-btn">Login / Register</a>
+                <a href="<?php echo e(url('/login')); ?>" @click="closeMenus()" class="mobile-auth-btn">Login / Register</a>
             </template>
 
-            <a href="<?php echo e(url('/cart')); ?>" @click="menuOpen = false" class="mobile-cart-link">
+            <a href="<?php echo e(url('/cart')); ?>" @click="closeMenus()" class="mobile-cart-link">
                 Cart (<span x-text="$store.cart.count"></span>)
             </a>
         </div>

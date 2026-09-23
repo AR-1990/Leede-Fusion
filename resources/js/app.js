@@ -143,6 +143,8 @@ document.addEventListener('alpine:init', () => {
 window.navbar = function navbar() {
     return {
         menuOpen: false,
+        collectionsOpen: false,
+        mobileCollectionsOpen: false,
         profileOpen: false,
         cartAnimating: false,
         init() {
@@ -153,7 +155,29 @@ window.navbar = function navbar() {
                 }, 300);
             });
         },
+        toggleMenu() {
+            this.menuOpen = !this.menuOpen;
+            if (!this.menuOpen) {
+                this.mobileCollectionsOpen = false;
+            }
+            this.collectionsOpen = false;
+            this.profileOpen = false;
+        },
+        closeMenus() {
+            this.menuOpen = false;
+            this.collectionsOpen = false;
+            this.mobileCollectionsOpen = false;
+            this.profileOpen = false;
+        },
+        toggleCollections() {
+            this.collectionsOpen = !this.collectionsOpen;
+            this.profileOpen = false;
+        },
+        toggleMobileCollections() {
+            this.mobileCollectionsOpen = !this.mobileCollectionsOpen;
+        },
         onProfileClick() {
+            this.collectionsOpen = false;
             if (Alpine.store('auth').isAuthenticated) {
                 this.profileOpen = !this.profileOpen;
             } else {
@@ -368,4 +392,3 @@ window.addEventListener('preloader-finished', () => {
 
 window.Alpine = Alpine;
 Alpine.start();
-

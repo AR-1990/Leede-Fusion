@@ -31,7 +31,10 @@ class CollectionController extends Controller
             $query->where('category_id', $selectedCategory->id);
         }
 
-        $products = $query->latest()->get();
+        $products = $query
+            ->latest()
+            ->paginate(12)
+            ->withQueryString();
 
         return view('collections', [
             'categories' => $categories,

@@ -18,28 +18,40 @@
         </div>
     </div>
 
-    <div class="collections-layout">
-        <aside class="collections-sidebar">
-            <div class="sidebar-group">
-                <h3 class="sidebar-title">CATEGORIES</h3>
-                <ul class="sidebar-list">
-                    <li class="{{ empty($categorySlug) ? 'active' : '' }}">
-                        <a href="{{ url('/collections') }}">All Pieces ({{ $categories->sum('products_count') }})</a>
-                    </li>
-                    @foreach($categories as $cat)
-                        <li class="{{ $categorySlug === $cat->slug ? 'active' : '' }}">
-                            <a href="{{ url('/collections?category=' . urlencode($cat->slug)) }}">
-                                {{ $cat->name }} ({{ $cat->products_count }})
-                            </a>
-                        </li>
-                    @endforeach
-                </ul>
-            </div>
-        </aside>
-
+    <div class="collections-layout collections-layout-products-only">
         <main class="collections-main">
-            <div class="results-info">
-                SHOWING {{ $products->count() }} {{ \Illuminate\Support\Str::plural('PIECE', $products->count()) }}
+            <section class="collections-filters">
+                <div class="collections-filters-head">
+                    <h2 class="collections-filters-title">Filter by Category</h2>
+                    <p class="collections-filters-copy">Choose a category to see only its products.</p>
+                </div>
+
+                <div class="collections-filters-grid">
+                    <a href="{{ url('/collections') }}" class="collection-filter-card {{ empty($categorySlug) ? 'is-active' : '' }}">
+                        <span class="collection-filter-name">All Pieces</span>
+                        <span class="collection-filter-meta">{{ $categories->sum('products_count') }} pieces</span>
+                    </a>
+
+                    @foreach($categories as $cat)
+                        <a href="{{ url('/collections?category=' . urlencode($cat->slug)) }}" class="collection-filter-card {{ $categorySlug === $cat->slug ? 'is-active' : '' }}">
+                            <span class="collection-filter-name">{{ $cat->name }}</span>
+                            <span class="collection-filter-meta">{{ $cat->products_count }} {{ \Illuminate\Support\Str::plural('piece', $cat->products_count) }}</span>
+                        </a>
+                    @endforeach
+                </div>
+            </section>
+
+            <div class="collections-toolbar">
+                <div class="results-info">
+                    SHOWING {{ $products->firstItem() ?? 0 }}-{{ $products->lastItem() ?? 0 }} OF {{ $products->total() }} {{ \Illuminate\Support\Str::plural('PIECE', $products->total()) }}
+                    @if($selectedCategory)
+                        IN {{ strtoupper($selectedCategory->name) }}
+                    @endif
+                </div>
+
+                @if($selectedCategory)
+                    <a href="{{ url('/collections') }}" class="collections-reset-link">View All Pieces</a>
+                @endif
             </div>
 
             @if($products->isNotEmpty())
@@ -47,10 +59,24 @@
                     @foreach($products as $product)
                         @include('partials.product-card', [
                             'product' => $product,
-                            'delayClass' => 'delay-' . min(($loop->index % 3 + 1) * 100, 300),
+                            'delayClass' => 'delay-' . min(($loop->index % 4 + 1) * 100, 400),
                         ])
                     @endforeach
                 </div>
+
+                @if($products->hasPages())
+                    <div class="collections-pagination">
+                        @foreach($products->onEachSide(1)->linkCollection() as $link)
+                            @if($link['url'])
+                                <a href="{{ $link['url'] }}" class="collections-pagination-link {{ $link['active'] ? 'is-active' : '' }}">
+                                    {!! $link['label'] !!}
+                                </a>
+                            @else
+                                <span class="collections-pagination-link is-disabled">{!! $link['label'] !!}</span>
+                            @endif
+                        @endforeach
+                    </div>
+                @endif
             @else
                 <div class="empty-results">
                     <h3>No items found in this collection</h3>
