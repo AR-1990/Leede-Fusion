@@ -22,7 +22,7 @@
         <div class="house-visual-banner reveal reveal-fade-up delay-100" x-data="imageLoader()">
             <div class="skeleton skeleton-img" x-show="!loaded" style="position: absolute; inset: 0;"></div>
             <img
-                src="/atelier-hero.jpg"
+                src="/atelier-hero.webp"
                 alt="LEEDE FUSION Atelier Studio"
                 class="house-banner-img"
                 :class="{ 'img-loaded': loaded }"
@@ -54,7 +54,7 @@
                         <div class="fabric-item-media" x-data="imageLoader()">
                             <div class="skeleton skeleton-img" x-show="!loaded" style="position: absolute; inset: 0;"></div>
                             <img
-                                src="/fabric-silk-crepe.jpg"
+                                src="/fabric-silk-crepe.webp"
                                 alt="Japanese Silk Crepe"
                                 class="fabric-item-img"
                                 :class="{ 'img-loaded': loaded }"
@@ -76,7 +76,7 @@
                         <div class="fabric-item-media" x-data="imageLoader()">
                             <div class="skeleton skeleton-img" x-show="!loaded" style="position: absolute; inset: 0;"></div>
                             <img
-                                src="/fabric-organza.jpg"
+                                src="/fabric-organza.webp"
                                 alt="French Silk Organza"
                                 class="fabric-item-img"
                                 :class="{ 'img-loaded': loaded }"
@@ -98,7 +98,7 @@
                         <div class="fabric-item-media" x-data="imageLoader()">
                             <div class="skeleton skeleton-img" x-show="!loaded" style="position: absolute; inset: 0;"></div>
                             <img
-                                src="/fabric-satin.jpg"
+                                src="/fabric-satin.webp"
                                 alt="Duchess Satin & Chiffon"
                                 class="fabric-item-img"
                                 :class="{ 'img-loaded': loaded }"
@@ -278,7 +278,7 @@
 
             {{-- 05 / BOTTOM MASTER CTA --}}
             <div class="house-cta-wrapper reveal reveal-fade-up">
-                <a href="{{ route('contact') }}?inquiry=Custom+Stitching" class="house-primary-cta-btn">
+                <a href="{{ route('design') }}" class="house-primary-cta-btn">
                     START YOUR DESIGN WITH THE ATELIER
                 </a>
             </div>
@@ -301,7 +301,7 @@ function atelierVisualizerTool() {
         },
         proceedWithConcept() {
             const encoded = encodeURIComponent(`[Atelier Visualizer Concept]\n${this.conceptSummary}`);
-            window.location.href = `{{ route('contact') }}?inquiry=Custom+Stitching&concept=${encoded}`;
+            window.location.href = `{{ route('design') }}&concept=${encoded}`;
         }
     };
 }

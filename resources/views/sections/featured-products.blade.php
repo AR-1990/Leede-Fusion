@@ -20,7 +20,7 @@
             <span class="ribbon-badge">BESPOKE OPTION</span>
             <span class="ribbon-text">Every design below can be customized to your precise height, sleeve, &amp; body measurements.</span>
         </div>
-        <a href="{{ route('contact') }}?inquiry=Custom+Stitching" class="ribbon-link">
+        <a href="{{ route('design') }}" class="ribbon-link">
             <span>REQUEST CUSTOM FIT &rarr;</span>
         </a>
     </div>

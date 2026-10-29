@@ -20,7 +20,15 @@ class Order extends Model
         'shipping_address',
         'payment_method',
         'tracking_number',
+        'city',
+        'notes',
     ];
+
+    /** Customer-facing order reference, e.g. ORD-00012. */
+    public function reference(): string
+    {
+        return 'ORD-'.str_pad((string) $this->id, 5, '0', STR_PAD_LEFT);
+    }
 
     public function user()
     {

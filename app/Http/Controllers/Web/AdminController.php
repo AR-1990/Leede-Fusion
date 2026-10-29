@@ -3,13 +3,16 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Web\Admin\DataTableController;
 use App\Models\Category;
-use App\Models\ContactInquiry;
 use App\Models\Order;
-use App\Models\Product;
 use App\Models\User;
 use Illuminate\Http\Request;
 
+/**
+ * Admin pages. Table rows are loaded on demand by the DataTables feeds in Admin\DataTableController,
+ * so these methods only pass what the page itself needs (form options, headline stats).
+ */
 class AdminController extends Controller
 {
     /**
@@ -17,11 +20,13 @@ class AdminController extends Controller
      */
     public function dashboard(Request $request)
     {
-        $orders = Order::query()->with(['items.product', 'user'])->latest()->get();
-        
-        $totalRevenue = (float) $orders->sum('total_amount');
-        $totalOrders = $orders->count();
-        $uniqueCustomers = $orders->pluck('user_id')->filter()->unique()->count();
+        $totals = Order::query()
+            ->selectRaw('COALESCE(SUM(total_amount), 0) as revenue, COUNT(*) as orders, COUNT(DISTINCT user_id) as customers')
+            ->first();
+
+        $totalRevenue = (float) $totals->revenue;
+        $totalOrders = (int) $totals->orders;
+        $uniqueCustomers = (int) $totals->customers;
         if ($uniqueCustomers === 0) {
             $uniqueCustomers = User::query()->where('is_admin', false)->count();
         }
@@ -34,7 +39,7 @@ class AdminController extends Controller
             ['label' => 'AVG ORDER VALUE', 'value' => 'Rs. ' . number_format($avgOrderValue)],
         ];
 
-        $recentOrders = $orders->take(15);
+        $recentOrders = Order::query()->with(['items.product', 'user'])->latest()->limit(15)->get();
 
         return view('admin.dashboard', compact(
             'stats',
@@ -47,10 +52,9 @@ class AdminController extends Controller
      */
     public function products(Request $request)
     {
-        $products = Product::query()->with('category')->latest()->get();
-        $categories = Category::query()->orderBy('name')->get();
+        $categories = Category::query()->orderBy('name')->get(['id', 'name']);
 
-        return view('admin.products', compact('products', 'categories'));
+        return view('admin.products', compact('categories'));
     }
 
     /**
@@ -58,9 +62,7 @@ class AdminController extends Controller
      */
     public function categories(Request $request)
     {
-        $categories = Category::query()->withCount('products')->orderBy('sort_order')->orderBy('name')->get();
-
-        return view('admin.categories', compact('categories'));
+        return view('admin.categories');
     }
 
     /**
@@ -68,9 +70,7 @@ class AdminController extends Controller
      */
     public function orders(Request $request)
     {
-        $orders = Order::query()->with(['items.product', 'user'])->latest()->get();
-
-        return view('admin.orders', compact('orders'));
+        return view('admin.orders');
     }
 
     /**
@@ -78,16 +78,9 @@ class AdminController extends Controller
      */
     public function inquiries(Request $request)
     {
-        $inquiries = ContactInquiry::query()->latestFirst()->get();
+        $stats = DataTableController::inquiryStats();
 
-        $stats = [
-            'total' => $inquiries->count(),
-            'unread' => $inquiries->where('status', 'unread')->count(),
-            'responded' => $inquiries->where('status', 'responded')->count(),
-            'today' => $inquiries->filter(fn ($i) => $i->created_at && $i->created_at->isToday())->count(),
-        ];
-
-        return view('admin.inquiries', compact('inquiries', 'stats'));
+        return view('admin.inquiries', compact('stats'));
     }
 
     /**
@@ -95,8 +88,6 @@ class AdminController extends Controller
      */
     public function users(Request $request)
     {
-        $users = User::query()->orderByDesc('id')->paginate(50);
-
-        return view('admin.users', compact('users'));
+        return view('admin.users');
     }
 }

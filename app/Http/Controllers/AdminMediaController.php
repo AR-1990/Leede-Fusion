@@ -14,7 +14,7 @@ class AdminMediaController extends Controller
     {
         $validated = $request->validate([
             'file' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
-            'folder' => 'nullable|string|in:categories,products,gallery',
+            'folder' => 'nullable|string|in:categories,products,gallery,blog',
         ]);
 
         $folder = $validated['folder'] ?? 'products';

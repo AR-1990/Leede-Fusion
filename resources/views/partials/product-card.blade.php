@@ -24,6 +24,7 @@
             class="product-enquire-btn"
             @click="$dispatch('open-quick-view', {
                 id: {{ $product->id }},
+                slug: @js($product->slug),
                 name: @js($product->name),
                 price: @js($product->price),
                 description: @js($product->description ?? 'Premium quality from Leede Fusion.'),
@@ -37,7 +38,7 @@
         </button>
     </div>
     <div class="product-info">
-        <h3 class="product-name">{{ $product->name }}</h3>
+        <h3 class="product-name"><a href="{{ route('product.show', $product) }}" class="product-name-link">{{ $product->name }}</a></h3>
         <p class="product-category-label">{{ $categoryLabel }}</p>
         <div class="product-price">
             <span class="current-price">Rs. {{ $product->price }}</span>

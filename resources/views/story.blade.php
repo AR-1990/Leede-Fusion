@@ -22,7 +22,7 @@
         <div class="house-visual-banner reveal reveal-fade-up delay-100" x-data="imageLoader()">
             <div class="skeleton skeleton-img" x-show="!loaded" x-transition.opacity.duration.300ms style="position: absolute; inset: 0;"></div>
             <img
-                src="/the-house-hero.jpg"
+                src="/the-house-hero.webp"
                 alt="LEEDE FUSION Atelier & Design House"
                 class="house-banner-img"
                 :class="{ 'img-loaded': loaded }"
@@ -55,7 +55,7 @@
                     <div class="chapter-media reveal reveal-slide-right delay-150" x-data="imageLoader()">
                         <div class="skeleton skeleton-img" x-show="!loaded" style="position: absolute; inset: 0;"></div>
                         <img
-                            src="/house-who-we-are.jpg"
+                            src="/house-who-we-are.webp"
                             alt="Who We Are - Leede Fusion House Identity"
                             class="chapter-img"
                             :class="{ 'img-loaded': loaded }"
@@ -86,7 +86,7 @@
                     <div class="chapter-media reveal reveal-slide-left delay-150" x-data="imageLoader()">
                         <div class="skeleton skeleton-img" x-show="!loaded" style="position: absolute; inset: 0;"></div>
                         <img
-                            src="/the-house-craft.jpg"
+                            src="/the-house-craft.webp"
                             alt="Our Story - Master Tailoring Craft at Leede Fusion"
                             class="chapter-img"
                             :class="{ 'img-loaded': loaded }"
@@ -191,7 +191,7 @@
 
             <!-- Bottom Master CTA -->
             <div class="house-cta-wrapper reveal reveal-fade-up">
-                <a href="{{ route('contact') }}?inquiry=Custom+Stitching" class="house-primary-cta-btn">
+                <a href="{{ route('design') }}" class="house-primary-cta-btn">
                     START YOUR DESIGN WITH THE HOUSE
                 </a>
             </div>

@@ -5,9 +5,38 @@
 @section('page_subtitle', 'Collections, cover photos, and sort order')
 
 @section('content')
-<div class="admin-categories-view" x-data="{
-    categories: {{ Js::from($categories) }},
+<div class="admin-categories-view"
+     @dt-edit-category.window="openEditById($event.detail.id)"
+     @dt-delete-category.window="handleDelete($event.detail.id)"
+     x-data="{
     showCreate: false,
+
+    init() {
+        window.categoriesTable = adminDataTable('#categories-table', @js(route('admin.data.categories')), [
+            { data: 'id', name: 'id', render: (id) => '#' + id },
+            { data: 'thumb', orderable: false, searchable: false },
+            { data: 'name', name: 'name' },
+            { data: 'slug', name: 'slug' },
+            { data: 'sort_order', name: 'sort_order', searchable: false },
+            { data: 'products_count', name: 'products_count', searchable: false },
+            { data: 'actions', orderable: false, searchable: false, className: 'dt-actions' },
+        ], {
+            order: [[4, 'asc']],
+            emptyText: 'No categories yet. Add your first category above.',
+        });
+    },
+
+    reloadTable() {
+        window.categoriesTable?.ajax.reload(null, false);
+    },
+
+    async openEditById(id) {
+        try {
+            this.startEdit(await adminRecord('category', id));
+        } catch (e) {
+            alert(e.message);
+        }
+    },
     saving: false,
     uploadingCreateImage: false,
     uploadingEditImage: false,
@@ -101,7 +130,7 @@
                 return;
             }
 
-            this.categories.push(data);
+            this.reloadTable();
             this.create = {
                 name: '',
                 slug: '',
@@ -163,10 +192,7 @@
                 return;
             }
 
-            const idx = this.categories.findIndex(c => c.id === this.editing.id);
-            if (idx !== -1) {
-                this.categories[idx] = data;
-            }
+            this.reloadTable();
             this.editing = null;
         } catch (err) {
             this.editError = 'Network error while updating category.';
@@ -185,7 +211,7 @@
             });
 
             if (res.ok) {
-                this.categories = this.categories.filter(c => c.id !== id);
+                this.reloadTable();
                 if (this.editing && this.editing.id === id) {
                     this.editing = null;
                 }
@@ -207,7 +233,8 @@
     </div>
 
     <!-- Edit Category Surface -->
-    <div x-show="editing" x-cloak x-transition>
+    <template x-if="editing">
+    <div>
         <section class="admin-surface" style="border: 2px solid var(--admin-accent);">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
                 <h3 class="admin-surface-title" style="margin: 0;" x-text="'EDIT CATEGORY #' + (editing?.id || '')"></h3>
@@ -219,23 +246,23 @@
             <form @submit.prevent="saveEdit()">
                 <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px;">
                     <div>
-                        <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 6px;">NAME *</label>
-                        <input type="text" class="admin-input" style="width: 100%; box-sizing: border-box; padding: 10px 12px; border: 1px solid #cbd5e1; font-size: 13px;" x-model="editing.name" required>
+                        <label style="font-size: 11px; font-weight: 700; color: var(--admin-text-soft); display: block; margin-bottom: 6px;">NAME *</label>
+                        <input type="text" class="admin-input" style="width: 100%; box-sizing: border-box; padding: 10px 12px; border: 1px solid var(--admin-border-strong); font-size: 13px;" x-model="editing.name" required>
                     </div>
 
                     <div>
-                        <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 6px;">SLUG</label>
-                        <input type="text" class="admin-input" style="width: 100%; box-sizing: border-box; padding: 10px 12px; border: 1px solid #cbd5e1; font-size: 13px;" x-model="editing.slug">
+                        <label style="font-size: 11px; font-weight: 700; color: var(--admin-text-soft); display: block; margin-bottom: 6px;">SLUG</label>
+                        <input type="text" class="admin-input" style="width: 100%; box-sizing: border-box; padding: 10px 12px; border: 1px solid var(--admin-border-strong); font-size: 13px;" x-model="editing.slug">
                     </div>
 
                     <div>
-                        <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 6px;">SORT ORDER</label>
-                        <input type="number" min="0" class="admin-input" style="width: 100%; box-sizing: border-box; padding: 10px 12px; border: 1px solid #cbd5e1; font-size: 13px;" x-model.number="editing.sort_order">
+                        <label style="font-size: 11px; font-weight: 700; color: var(--admin-text-soft); display: block; margin-bottom: 6px;">SORT ORDER</label>
+                        <input type="number" min="0" class="admin-input" style="width: 100%; box-sizing: border-box; padding: 10px 12px; border: 1px solid var(--admin-border-strong); font-size: 13px;" x-model.number="editing.sort_order">
                     </div>
 
                     <div style="grid-column: 1 / -1;">
-                        <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 6px;">DESCRIPTION</label>
-                        <textarea class="admin-input" style="width: 100%; box-sizing: border-box; padding: 12px; border: 1px solid #cbd5e1; font-size: 13px; min-height: 70px;" x-model="editing.description"></textarea>
+                        <label style="font-size: 11px; font-weight: 700; color: var(--admin-text-soft); display: block; margin-bottom: 6px;">DESCRIPTION</label>
+                        <textarea class="admin-input" style="width: 100%; box-sizing: border-box; padding: 12px; border: 1px solid var(--admin-border-strong); font-size: 13px; min-height: 70px;" x-model="editing.description"></textarea>
                     </div>
 
                     <div style="grid-column: 1 / -1;">
@@ -273,6 +300,7 @@
             </form>
         </section>
     </div>
+    </template>
 
     <!-- Add Category Surface -->
     <div x-show="showCreate" x-cloak x-transition>
@@ -284,23 +312,23 @@
             <form @submit.prevent="handleCreate()">
                 <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; align-items: end;">
                     <div>
-                        <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 6px;">NAME *</label>
-                        <input type="text" class="admin-input" style="width: 100%; box-sizing: border-box; padding: 10px 12px; border: 1px solid #cbd5e1; font-size: 13px;" x-model="create.name" placeholder="e.g. Shalwar Kameez" required>
+                        <label style="font-size: 11px; font-weight: 700; color: var(--admin-text-soft); display: block; margin-bottom: 6px;">NAME *</label>
+                        <input type="text" class="admin-input" style="width: 100%; box-sizing: border-box; padding: 10px 12px; border: 1px solid var(--admin-border-strong); font-size: 13px;" x-model="create.name" placeholder="e.g. Shalwar Kameez" required>
                     </div>
 
                     <div>
-                        <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 6px;">SLUG (Optional)</label>
-                        <input type="text" class="admin-input" style="width: 100%; box-sizing: border-box; padding: 10px 12px; border: 1px solid #cbd5e1; font-size: 13px;" x-model="create.slug" placeholder="auto from name">
+                        <label style="font-size: 11px; font-weight: 700; color: var(--admin-text-soft); display: block; margin-bottom: 6px;">SLUG (Optional)</label>
+                        <input type="text" class="admin-input" style="width: 100%; box-sizing: border-box; padding: 10px 12px; border: 1px solid var(--admin-border-strong); font-size: 13px;" x-model="create.slug" placeholder="auto from name">
                     </div>
 
                     <div>
-                        <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 6px;">SORT ORDER</label>
-                        <input type="number" min="0" class="admin-input" style="width: 100%; box-sizing: border-box; padding: 10px 12px; border: 1px solid #cbd5e1; font-size: 13px;" x-model.number="create.sort_order" placeholder="0">
+                        <label style="font-size: 11px; font-weight: 700; color: var(--admin-text-soft); display: block; margin-bottom: 6px;">SORT ORDER</label>
+                        <input type="number" min="0" class="admin-input" style="width: 100%; box-sizing: border-box; padding: 10px 12px; border: 1px solid var(--admin-border-strong); font-size: 13px;" x-model.number="create.sort_order" placeholder="0">
                     </div>
 
                     <div style="grid-column: 1 / -1;">
-                        <label style="font-size: 11px; font-weight: 700; color: #475569; display: block; margin-bottom: 6px;">DESCRIPTION</label>
-                        <textarea class="admin-input" style="width: 100%; box-sizing: border-box; padding: 12px; border: 1px solid #cbd5e1; font-size: 13px; min-height: 70px;" x-model="create.description" placeholder="Bespoke luxury tailored suits..."></textarea>
+                        <label style="font-size: 11px; font-weight: 700; color: var(--admin-text-soft); display: block; margin-bottom: 6px;">DESCRIPTION</label>
+                        <textarea class="admin-input" style="width: 100%; box-sizing: border-box; padding: 12px; border: 1px solid var(--admin-border-strong); font-size: 13px; min-height: 70px;" x-model="create.description" placeholder="Bespoke luxury tailored suits..."></textarea>
                     </div>
 
                     <div style="grid-column: 1 / -1;">
@@ -338,9 +366,9 @@
         </section>
     </div>
 
-    <!-- Categories Table -->
-    <div class="admin-table-container">
-        <table class="admin-table">
+    <!-- Categories Table (server-side) -->
+    <div class="admin-table-container admin-dt">
+        <table id="categories-table" class="admin-table" style="width: 100%;">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -349,40 +377,9 @@
                     <th>SLUG</th>
                     <th>SORT</th>
                     <th>PRODUCTS</th>
-                    <th style="text-align: right;">ACTIONS</th>
+                    <th>ACTIONS</th>
                 </tr>
             </thead>
-            <tbody>
-                <template x-for="cat in categories" :key="cat.id">
-                    <tr>
-                        <td style="font-weight: 700;" x-text="'#' + cat.id"></td>
-                        <td>
-                            <img :src="cat.image || '/c1.jpg'" alt="" style="width: 44px; height: 52px; object-fit: cover; border-radius: 4px; border: 1px solid #e2e8f0; display: block;">
-                        </td>
-                        <td style="font-weight: 600;" x-text="cat.name"></td>
-                        <td style="color: #64748b;" x-text="cat.slug"></td>
-                        <td x-text="cat.sort_order ?? 0"></td>
-                        <td>
-                            <span style="background: #f1f5f9; padding: 3px 8px; border-radius: 999px; font-size: 11px; font-weight: 700; color: #475569;" x-text="(cat.products_count ?? 0) + ' items'"></span>
-                        </td>
-                        <td style="text-align: right;">
-                            <button type="button" class="edit-btn" @click="startEdit(cat)" style="margin-right: 12px; font-weight: 600;">
-                                EDIT
-                            </button>
-                            <button type="button" class="delete-btn" @click="handleDelete(cat.id)" style="font-weight: 600;">
-                                DELETE
-                            </button>
-                        </td>
-                    </tr>
-                </template>
-                <template x-if="categories.length === 0">
-                    <tr>
-                        <td colSpan="7" style="text-align: center; padding: 48px; color: #94a3b8;">
-                            No categories yet. Add your first category above.
-                        </td>
-                    </tr>
-                </template>
-            </tbody>
         </table>
     </div>
 </div>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Models\Post;
 use App\Models\Product;
 use Illuminate\View\View;
 
@@ -37,7 +38,7 @@ class HomeController extends Controller
             'heroSlides' => config('content.hero_slides'),
             'whyShop' => config('content.why_shop'),
             'project' => config('content.project'),
-            'blogPosts' => config('content.blog_posts', []),
+            'blogPosts' => Post::query()->published()->limit(3)->get(),
         ]);
     }
 }

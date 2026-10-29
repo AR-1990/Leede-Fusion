@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
-@section('title', ($selectedCategory ? $selectedCategory->name . ' - ' : '') . 'Collections | Leede Fusion')
+@section('title', ($selectedCategory ? $selectedCategory->name . ' - ' : '') . 'Collections | Leede Fusion Karachi')
+@section('description', $selectedCategory?->description ?: "Browse Leede Fusion ready-to-wear collections: women's suits, men's wear, kids and accessories. Every article can be customized.")
 
 @section('content')
     @include('partials.navbar')

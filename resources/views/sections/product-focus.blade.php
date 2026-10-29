@@ -33,7 +33,7 @@
             </div>
 
             <div class="focus-action-btns">
-                <a href="{{ route('contact') }}?inquiry=Custom+Stitching" class="shop-now-btn white-btn">
+                <a href="{{ route('design') }}" class="shop-now-btn white-btn">
                     ORDER BESPOKE TAILORED <span>→</span>
                 </a>
                 <a href="{{ url('/collections') }}" class="shop-now-btn outline-btn" style="border: 1px solid rgba(255,255,255,0.4); color: #fff; background: transparent;">
@@ -44,7 +44,7 @@
         <div class="focus-image-content reveal reveal-slide-right delay-200" x-data="imageLoader()">
             <div class="skeleton skeleton-dark skeleton-img" x-show="!loaded" x-transition.opacity.duration.400ms></div>
             <img
-                src="/1.jpg"
+                src="/1.webp"
                 alt="Noor-e-Zahra Bespoke Silk Pret"
                 class="focus-single-img"
                 :class="{ 'img-loaded': loaded }"

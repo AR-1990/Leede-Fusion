@@ -54,19 +54,28 @@
                     </div>
 
                     <div class="quantity-selector-wrapper">
+                        <span class="quantity-label">SELECT SIZE</span>
+                        <div class="size-chips">
+                            <template x-for="s in sizes" :key="s">
+                                <button type="button" class="size-chip" :class="{ 'is-active': size === s }" @click="size = s" x-text="s"></button>
+                            </template>
+                        </div>
+                        <a href="{{ route('the-fit') }}" class="size-guide-link">Size guide</a>
+                    </div>
+
+                    <div class="quantity-selector-wrapper">
                         <span class="quantity-label">SELECT QUANTITY</span>
                         <div class="quantity-controls">
                             <button type="button" class="qty-btn" @click="quantity = Math.max(1, quantity - 1)">−</button>
                             <span class="qty-value" x-text="quantity"></span>
-                            <button type="button" class="qty-btn" @click="quantity++">+</button>
+                            <button type="button" class="qty-btn" @click="quantity = Math.min(20, quantity + 1)">+</button>
                         </div>
                     </div>
                 </div>
 
                 <div class="modal-footer">
                     <div class="auth-warning-msg" x-show="showAuthWarning" x-cloak x-transition>
-                        Please login first to place order.
-                        <button type="button" @click="window.location.href = '/login'">Login Now</button>
+                        Please select your size first.
                     </div>
 
                     <button
@@ -78,7 +87,11 @@
                         x-text="added ? 'ADDED TO CART ✓' : 'ADD TO CART'"
                     ></button>
                     <p class="modal-footer-note"
-                       x-text="added ? 'Item added to your cart!' : 'Select quantity and add to your cart for checkout.'"></p>
+                       x-text="added ? 'Item added to your cart!' : 'Want it in another colour or cut? Customize it in the Design Studio.'"></p>
+                    <div class="modal-secondary-links" x-show="product?.slug">
+                        <a :href="'/collections/' + product?.slug">View full details</a>
+                        <a :href="'/design?product=' + product?.slug">Customize this article</a>
+                    </div>
                 </div>
             </div>
         </div>

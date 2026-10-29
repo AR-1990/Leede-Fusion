@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Sign In / Register | Leede Fusion')
+@push('head')<meta name="robots" content="noindex">@endpush
 
 @section('body_class', 'auth-page-body')
 

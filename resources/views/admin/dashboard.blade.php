@@ -84,22 +84,22 @@
                     @forelse($recentOrders as $order)
                         <tr>
                             <td>
-                                <span style="font-family: ui-monospace, SFMono-Regular, monospace; font-size: 12px; font-weight: 600; color: #0f172a;">
-                                    #ORD-{{ str_pad($order->id, 4, '0', STR_PAD_LEFT) }}
+                                <span style="font-family: ui-monospace, SFMono-Regular, monospace; font-size: 12px; font-weight: 600; color: var(--admin-ink);">
+                                    ORD-{{ str_pad($order->id, 5, '0', STR_PAD_LEFT) }}
                                 </span>
                             </td>
                             <td>
-                                <div style="font-weight: 500; color: #0f172a;">
-                                    {{ $order->user->name ?? $order->customer_name ?? 'Guest customer' }}
+                                <div style="font-weight: 500; color: var(--admin-ink);">
+                                    {{ $order->user?->name ?? $order->customer_name ?? 'Guest customer' }}
                                 </div>
-                                <div style="font-size: 12px; color: #64748b;">
-                                    {{ $order->user->email ?? $order->customer_email ?? 'Direct checkout' }}
+                                <div style="font-size: 12px; color: var(--admin-text-muted);">
+                                    {{ collect([$order->customer_email ?? $order->user?->email ?? $order->customer_phone ?? $order->customer_whatsapp, $order->city])->filter()->implode(' · ') ?: 'Guest checkout' }}
                                 </div>
                             </td>
-                            <td style="color: #64748b; font-size: 13px;">
+                            <td style="color: var(--admin-text-muted); font-size: 13px;">
                                 {{ $order->created_at->format('M d, Y') }}
                             </td>
-                            <td style="font-weight: 500; color: #0f172a;">
+                            <td style="font-weight: 500; color: var(--admin-ink);">
                                 Rs. {{ number_format((float) $order->total_amount) }}
                             </td>
                             <td>
@@ -115,7 +115,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" style="text-align: center; padding: 48px; color: #64748b; font-size: 13px;">
+                            <td colspan="6" style="text-align: center; padding: 48px; color: var(--admin-text-muted); font-size: 13px;">
                                 No customer orders recorded yet.
                             </td>
                         </tr>

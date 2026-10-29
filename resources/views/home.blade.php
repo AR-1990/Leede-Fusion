@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'Leede Fusion | Premium Fashion')
+@section('title', 'Leede Fusion | Ready-to-Wear & Bespoke Stitching in Karachi')
+@section('description', 'Shop ready-to-wear articles or design your own outfit with Leede Fusion, Karachi: custom stitching, abayas and festive wear with nationwide delivery.')
 
 @section('content')
     @include('partials.navbar')

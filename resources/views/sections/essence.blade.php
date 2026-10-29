@@ -21,7 +21,7 @@
                     </p>
                 </div>
                 <div class="essence-card-bottom">
-                    <a href="{{ route('contact') }}?inquiry=Custom+Stitching" class="essence-card-link">
+                    <a href="{{ route('design') }}" class="essence-card-link">
                         <span>INQUIRE NOW</span>
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <line x1="5" y1="12" x2="19" y2="12"></line>

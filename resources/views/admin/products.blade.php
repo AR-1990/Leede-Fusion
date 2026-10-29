@@ -5,10 +5,42 @@
 @section('page_subtitle', 'Catalog synced from your database')
 
 @section('content')
-<div class="admin-products-view" x-data="{
-    products: {{ Js::from($products) }},
+<div class="admin-products-view"
+     @dt-edit-product.window="openEditById($event.detail.id)"
+     @dt-delete-product.window="handleDelete($event.detail.id)"
+     x-data="{
+    total: 0,
     categories: {{ Js::from($categories) }},
+
+    init() {
+        window.productsTable = adminDataTable('#products-table', @js(route('admin.data.products')), [
+            { data: 'id', name: 'id', render: (id) => '#' + id },
+            { data: 'thumb', orderable: false, searchable: false },
+            { data: 'name', name: 'name' },
+            { data: 'category_name', name: 'category_name' },
+            { data: 'price', name: 'price' },
+            { data: 'stock', name: 'stock' },
+            { data: 'is_featured', name: 'is_featured', searchable: false },
+            { data: 'actions', orderable: false, searchable: false, className: 'dt-actions' },
+        ], {
+            emptyText: 'No products in the catalog yet. Add your first product above.',
+            onData: (json) => this.total = json.recordsTotal,
+        });
+    },
+
+    reloadTable() {
+        window.productsTable?.ajax.reload(null, false);
+    },
+
+    async openEditById(id) {
+        try {
+            this.startEdit(await adminRecord('product', id));
+        } catch (e) {
+            alert(e.message);
+        }
+    },
     showAdd: false,
+    editingId: null,
     saving: false,
     uploadingPrimary: false,
     uploadingGallery: false,
@@ -42,9 +74,94 @@
             stock: 0,
             is_featured: false
         };
+        this.editingId = null;
         this.errorMessage = '';
         this.primaryError = '';
         this.galleryError = '';
+    },
+
+    openCreate() {
+        if (this.showAdd && !this.editingId) {
+            this.showAdd = false;
+            return;
+        }
+        this.resetForm();
+        this.showAdd = true;
+    },
+
+    startEdit(product) {
+        this.resetForm();
+        this.editingId = product.id;
+        this.form = {
+            name: product.name || '',
+            category_id: product.category_id ? String(product.category_id) : '',
+            price: product.price != null ? String(product.price) : '',
+            old_price: product.old_price != null ? String(product.old_price) : '',
+            description: product.description || '',
+            image: product.image || '',
+            galleryUrls: Array.isArray(product.images) ? [...product.images] : [],
+            tag: product.tag || '',
+            stock: product.stock ?? 0,
+            is_featured: !!product.is_featured
+        };
+        this.showAdd = true;
+        this.$nextTick(() => this.$refs.productForm?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+    },
+
+    cancelEdit() {
+        this.resetForm();
+        this.showAdd = false;
+    },
+
+    buildPayload() {
+        return {
+            name: this.form.name.trim(),
+            category_id: this.form.category_id,
+            price: String(this.form.price).trim(),
+            old_price: String(this.form.old_price || '').trim() || null,
+            description: this.form.description.trim() || null,
+            image: this.form.image.trim() || null,
+            images: this.form.galleryUrls.length ? this.form.galleryUrls : null,
+            tag: this.form.tag.trim() || null,
+            stock: Number(this.form.stock) || 0,
+            is_featured: this.form.is_featured
+        };
+    },
+
+    handleSubmit() {
+        return this.editingId ? this.saveEdit() : this.handleCreate();
+    },
+
+    async saveEdit() {
+        this.saving = true;
+        this.errorMessage = '';
+
+        try {
+            const res = await fetch(`/api/products/${this.editingId}`, {
+                method: 'PUT',
+                headers: {
+                    ...this.getAuthHeaders(),
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(this.buildPayload())
+            });
+
+            const data = await res.json().catch(() => ({}));
+
+            if (!res.ok) {
+                this.errorMessage = data.errors
+                    ? Object.values(data.errors).flat().join(' • ')
+                    : (data.message || 'Could not save product');
+                return;
+            }
+
+            this.reloadTable();
+            this.cancelEdit();
+        } catch (e) {
+            this.errorMessage = 'Network error while saving product.';
+        } finally {
+            this.saving = false;
+        }
     },
 
     getAuthHeaders() {
@@ -130,18 +247,7 @@
         this.saving = true;
         this.errorMessage = '';
 
-        const payload = {
-            name: this.form.name.trim(),
-            category_id: this.form.category_id,
-            price: String(this.form.price).trim(),
-            old_price: this.form.old_price.trim() || null,
-            description: this.form.description.trim() || null,
-            image: this.form.image.trim() || null,
-            images: this.form.galleryUrls.length ? this.form.galleryUrls : null,
-            tag: this.form.tag.trim() || null,
-            stock: Number(this.form.stock) || 0,
-            is_featured: this.form.is_featured
-        };
+        const payload = this.buildPayload();
 
         try {
             const res = await fetch('/api/products', {
@@ -166,7 +272,7 @@
             }
 
             // Successfully added
-            this.products.unshift(data);
+            this.reloadTable();
             this.resetForm();
             this.showAdd = false;
         } catch (e) {
@@ -186,7 +292,8 @@
             });
 
             if (res.ok) {
-                this.products = this.products.filter(p => p.id !== id);
+                if (this.editingId === id) this.cancelEdit();
+                this.reloadTable();
             } else {
                 const data = await res.json().catch(() => ({}));
                 alert(data.message || 'Failed to delete product.');
@@ -208,32 +315,35 @@
 }">
 
     <div class="admin-action-bar">
-        <p>Catalog has <strong x-text="products.length"></strong> items. Upload photos from your device.</p>
-        <button type="button" class="btn-admin-primary" @click="showAdd = !showAdd">
-            <span x-text="showAdd ? 'Close form' : '+ Add product'"></span>
+        <p>Catalog has <strong x-text="total"></strong> items. Upload photos from your device.</p>
+        <button type="button" class="btn-admin-primary" @click="openCreate()">
+            <span x-text="showAdd && !editingId ? 'Close form' : '+ Add product'"></span>
         </button>
     </div>
 
-    <!-- Create Product Form -->
-    <div x-show="showAdd" x-cloak x-transition>
-        <form class="admin-surface" @submit.prevent="handleCreate()">
-            <h3 class="admin-surface-title">NEW PRODUCT</h3>
+    <!-- Create / Edit Product Form -->
+    <div x-show="showAdd" x-cloak x-transition x-ref="productForm">
+        <form class="admin-surface" :class="{ 'admin-surface-editing': editingId }" @submit.prevent="handleSubmit()">
+            <div class="admin-surface-head">
+                <h3 class="admin-surface-title" x-text="editingId ? 'EDIT PRODUCT #' + editingId : 'NEW PRODUCT'"></h3>
+                <button type="button" class="btn-admin-ghost" @click="cancelEdit()">Close</button>
+            </div>
 
             <div x-show="errorMessage" class="admin-upload-error" style="margin-bottom: 16px; font-weight: 600;" x-text="errorMessage"></div>
 
             <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px;">
                 <div>
-                    <label style="font-size: 11px; font-weight: 700; color: #475569; letter-spacing: 0.05em; display: block; margin-bottom: 6px;">
+                    <label class="admin-field-label">
                         PRODUCT NAME *
                     </label>
-                    <input type="text" class="admin-input" style="width: 100%; box-sizing: border-box; padding: 10px 12px; border: 1px solid #cbd5e1; font-size: 13px;" x-model="form.name" placeholder="e.g. Royal Oxford Kurta" required>
+                    <input type="text" class="admin-input admin-field-input" x-model="form.name" placeholder="e.g. Royal Oxford Kurta" required>
                 </div>
 
                 <div>
-                    <label style="font-size: 11px; font-weight: 700; color: #475569; letter-spacing: 0.05em; display: block; margin-bottom: 6px;">
+                    <label class="admin-field-label">
                         CATEGORY *
                     </label>
-                    <select class="admin-input" style="width: 100%; box-sizing: border-box; padding: 10px 12px; border: 1px solid #cbd5e1; font-size: 13px; background: #fff;" x-model="form.category_id" required>
+                    <select class="admin-input admin-field-input" x-model="form.category_id" required>
                         <option value="">Select category…</option>
                         <template x-for="cat in categories" :key="cat.id">
                             <option :value="cat.id" x-text="cat.name"></option>
@@ -242,31 +352,31 @@
                 </div>
 
                 <div>
-                    <label style="font-size: 11px; font-weight: 700; color: #475569; letter-spacing: 0.05em; display: block; margin-bottom: 6px;">
+                    <label class="admin-field-label">
                         PRICE * (Rs.)
                     </label>
-                    <input type="text" class="admin-input" style="width: 100%; box-sizing: border-box; padding: 10px 12px; border: 1px solid #cbd5e1; font-size: 13px;" x-model="form.price" placeholder="4500" required>
+                    <input type="text" class="admin-input admin-field-input" x-model="form.price" placeholder="4500" required>
                 </div>
 
                 <div>
-                    <label style="font-size: 11px; font-weight: 700; color: #475569; letter-spacing: 0.05em; display: block; margin-bottom: 6px;">
+                    <label class="admin-field-label">
                         OLD PRICE (Optional)
                     </label>
-                    <input type="text" class="admin-input" style="width: 100%; box-sizing: border-box; padding: 10px 12px; border: 1px solid #cbd5e1; font-size: 13px;" x-model="form.old_price" placeholder="5500">
+                    <input type="text" class="admin-input admin-field-input" x-model="form.old_price" placeholder="5500">
                 </div>
 
                 <div>
-                    <label style="font-size: 11px; font-weight: 700; color: #475569; letter-spacing: 0.05em; display: block; margin-bottom: 6px;">
+                    <label class="admin-field-label">
                         BADGE / TAG
                     </label>
-                    <input type="text" class="admin-input" style="width: 100%; box-sizing: border-box; padding: 10px 12px; border: 1px solid #cbd5e1; font-size: 13px;" x-model="form.tag" placeholder="e.g. LUXURY, NEW DROP">
+                    <input type="text" class="admin-input admin-field-input" x-model="form.tag" placeholder="e.g. LUXURY, NEW DROP">
                 </div>
 
                 <div>
-                    <label style="font-size: 11px; font-weight: 700; color: #475569; letter-spacing: 0.05em; display: block; margin-bottom: 6px;">
+                    <label class="admin-field-label">
                         STOCK QUANTITY
                     </label>
-                    <input type="number" min="0" class="admin-input" style="width: 100%; box-sizing: border-box; padding: 10px 12px; border: 1px solid #cbd5e1; font-size: 13px;" x-model.number="form.stock" placeholder="25">
+                    <input type="number" min="0" class="admin-input admin-field-input" x-model.number="form.stock" placeholder="25">
                 </div>
 
                 <!-- Primary Image Upload -->
@@ -339,30 +449,32 @@
 
                 <!-- Description -->
                 <div style="grid-column: 1 / -1;">
-                    <label style="font-size: 11px; font-weight: 700; color: #475569; letter-spacing: 0.05em; display: block; margin-bottom: 6px;">
+                    <label class="admin-field-label">
                         DESCRIPTION
                     </label>
-                    <textarea class="admin-input" style="width: 100%; box-sizing: border-box; padding: 12px; border: 1px solid #cbd5e1; font-size: 13px; min-height: 90px;" x-model="form.description" placeholder="Handcrafted with 100% Egyptian cotton..."></textarea>
+                    <textarea class="admin-input admin-field-input" style="min-height: 90px;" x-model="form.description" placeholder="Handcrafted with 100% Egyptian cotton..."></textarea>
                 </div>
 
                 <!-- Featured Checkbox -->
                 <div style="grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; margin-top: 4px;">
                     <input type="checkbox" id="is_featured_cb" x-model="form.is_featured" style="width: 16px; height: 16px; cursor: pointer;">
-                    <label for="is_featured_cb" style="font-size: 13px; font-weight: 600; color: #0f172a; cursor: pointer;">
+                    <label for="is_featured_cb" class="admin-check-label">
                         Featured on homepage (Highlights in the featured collection section)
                     </label>
                 </div>
             </div>
 
-            <div style="margin-top: 24px;">
-                <button type="submit" class="btn-admin-primary" :disabled="saving" x-text="saving ? 'CREATING PRODUCT...' : 'CREATE PRODUCT'"></button>
+            <div style="margin-top: 24px; display: flex; gap: 10px; flex-wrap: wrap;">
+                <button type="submit" class="btn-admin-primary" :disabled="saving"
+                        x-text="saving ? 'SAVING…' : (editingId ? 'SAVE CHANGES' : 'CREATE PRODUCT')"></button>
+                <button type="button" class="btn-admin-ghost" x-show="editingId" @click="cancelEdit()">Cancel</button>
             </div>
         </form>
     </div>
 
-    <!-- Products Table -->
-    <div class="admin-table-container">
-        <table class="admin-table">
+    <!-- Products Table (server-side) -->
+    <div class="admin-table-container admin-dt">
+        <table id="products-table" class="admin-table" style="width: 100%;">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -375,37 +487,6 @@
                     <th>ACTIONS</th>
                 </tr>
             </thead>
-            <tbody>
-                <template x-for="product in products" :key="product.id">
-                    <tr>
-                        <td style="font-weight: 700;" x-text="'#' + product.id"></td>
-                        <td>
-                            <img :src="getProductImage(product)" alt="" style="width: 46px; height: 56px; object-fit: cover; border-radius: 6px; border: 1px solid #e2e8f0; display: block;">
-                        </td>
-                        <td style="font-weight: 600;" x-text="product.name"></td>
-                        <td style="color: #64748b;" x-text="product.category?.name || 'Uncategorized'"></td>
-                        <td style="font-weight: 700;" x-text="'Rs. ' + Number(product.price).toLocaleString()"></td>
-                        <td x-text="product.stock ?? 0"></td>
-                        <td>
-                            <span class="status-badge" :class="product.is_featured ? 'completed' : 'pending'" x-text="product.is_featured ? 'YES' : 'NO'"></span>
-                        </td>
-                        <td>
-                            <div class="action-btns">
-                                <button type="button" class="delete-btn" @click="handleDelete(product.id)">
-                                    DELETE
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                </template>
-                <template x-if="products.length === 0">
-                    <tr>
-                        <td colSpan="8" style="text-align: center; padding: 48px; color: #94a3b8;">
-                            No products found in the catalog. Add your first product above.
-                        </td>
-                    </tr>
-                </template>
-            </tbody>
         </table>
     </div>
 </div>

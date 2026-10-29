@@ -68,7 +68,7 @@
                     @endif
                 </div>
             </div>
-            <a href="{{ route('contact') }}?inquiry=Custom+Stitching">
+            <a href="{{ route('design') }}">
                 <span class="nav-highlight-link">Custom Design</span>
             </a>
             <a href="{{ route('contact') }}">Contact</a>
@@ -147,7 +147,7 @@
                     <a href="{{ url('/collections') }}" class="mobile-collection-link mobile-collection-all" @click="closeMenus()">View All Collections &rarr;</a>
                 </div>
             </div>
-            <a href="{{ route('contact') }}?inquiry=Custom+Stitching" @click="closeMenus()">
+            <a href="{{ route('design') }}" @click="closeMenus()">
                 Custom Design &amp; Stitching
             </a>
             <a href="{{ route('contact') }}" @click="closeMenus()">Contact Us</a>

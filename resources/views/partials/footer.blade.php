@@ -1,3 +1,4 @@
+@php($project = config('content.project'))
 <footer class="main-footer">
     <div class="footer-top">
         <div class="footer-brand-column reveal reveal-fade-up">
@@ -6,49 +7,60 @@
                 <span><span class="brand-word-primary">Leede</span> <span class="brand-word-secondary">Fusion</span></span>
             </div>
             <p class="footer-tagline">
-                Premium retail clothing and accessories based in Karachi.
-                Providing quality fabrics and elegant suits since our inception.
+                Ready-to-wear articles and bespoke stitching from our Karachi atelier.
+                Your idea, our craft, delivered nationwide.
             </p>
             <div class="footer-socials">
-                <a href="{{ config('content.project.whatsapp_link') }}">WA</a>
-                <a href="#">IG</a>
-                <a href="#">FB</a>
+                <a href="{{ $project['whatsapp_link'] }}" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">WA</a>
+                @if (! empty($project['instagram']))
+                    <a href="{{ $project['instagram'] }}" target="_blank" rel="noopener noreferrer" aria-label="Instagram">IG</a>
+                @endif
+                @if (! empty($project['facebook']))
+                    <a href="{{ $project['facebook'] }}" target="_blank" rel="noopener noreferrer" aria-label="Facebook">FB</a>
+                @endif
+                @if (! empty($project['tiktok']))
+                    <a href="{{ $project['tiktok'] }}" target="_blank" rel="noopener noreferrer" aria-label="TikTok">TT</a>
+                @endif
             </div>
         </div>
 
         <div class="footer-links-column reveal reveal-fade-up delay-100">
             <h4 class="footer-label">Collections</h4>
-            <a href="{{ url('/collections') }}">Men's Fabric</a>
-            <a href="{{ url('/collections') }}">Women's Suits</a>
-            <a href="{{ url('/collections') }}">Kids Wear</a>
-            <a href="{{ url('/collections') }}">Accessories</a>
+            @forelse (array_slice($navCategories ?? [], 0, 5) as $cat)
+                <a href="{{ $cat['url'] }}">{{ $cat['name'] }}</a>
+            @empty
+                <a href="{{ route('collections') }}">All Collections</a>
+            @endforelse
+            <a href="{{ route('design') }}">Design Your Own</a>
         </div>
 
         <div class="footer-links-column reveal reveal-fade-up delay-200">
             <h4 class="footer-label">Info</h4>
-            <a href="{{ url('/story') }}">Our Story</a>
-            <a href="{{ url('/#journal') }}">Journal & Blog</a>
-            <a href="{{ url('/#contact') }}">Contact Us</a>
-            <a href="{{ url('/#contact') }}">Location</a>
+            <a href="{{ route('the-house') }}">Our Story</a>
+            <a href="{{ route('the-process') }}">The Process</a>
+            <a href="{{ route('the-fit') }}">Size Guide</a>
+            <a href="{{ route('journal') }}">Journal</a>
+            <a href="{{ route('track') }}">Track Your Order</a>
+            <a href="{{ route('contact') }}">Contact Us</a>
         </div>
 
         <div class="footer-contact-column reveal reveal-fade-up delay-300">
             <h4 class="footer-label">Contact Details</h4>
-            <p>{{ config('content.project.location') }}</p>
-            <p>WhatsApp: 0306 6978156</p>
-            <p>Email: {{ config('content.project.email') }}</p>
-            <p>Hours: 9:00 AM – 9:00 PM</p>
+            <p>{{ $project['location'] }}</p>
+            <p>WhatsApp: <a href="{{ $project['whatsapp_link'] }}" target="_blank" rel="noopener noreferrer">{{ $project['phone'] }}</a></p>
+            <p>Email: <a href="mailto:{{ $project['email'] }}">{{ $project['email'] }}</a></p>
+            <p>Hours: {{ $project['hours'] }}</p>
         </div>
     </div>
 
     <div class="footer-bottom-bar reveal reveal-fade-up delay-200">
         <div class="footer-legal">
-            <span>Privacy Policy</span>
-            <span>Terms of Service</span>
-            <span>Cookies</span>
+            <a href="{{ route('the-process') }}">Delivery & Process</a>
+            <a href="{{ route('the-fit') }}">Sizing</a>
+            <a href="{{ route('track') }}">Order Tracking</a>
         </div>
         <div class="footer-copyright">
-            © {{ date('Y') }} Leede Fusion. ALL RIGHTS RESERVED.
+            © {{ date('Y') }} {{ $project['name'] ?? 'Leede Fusion' }}. ALL RIGHTS RESERVED.
         </div>
     </div>
 </footer>

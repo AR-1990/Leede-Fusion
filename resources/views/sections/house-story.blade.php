@@ -19,7 +19,7 @@
             <div class="house-story-media reveal reveal-slide-right delay-200" x-data="imageLoader()">
                 <div class="skeleton skeleton-img" x-show="!loaded" x-transition.opacity.duration.300ms style="position: absolute; inset: 0;"></div>
                 <img
-                    src="/house-who-we-are.jpg"
+                    src="/house-who-we-are.webp"
                     alt="LEEDE FUSION - Modern Women's Fashion & Custom Design House"
                     class="house-story-img"
                     :class="{ 'img-loaded': loaded }"

@@ -6,9 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
-use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,43 +14,10 @@ use Illuminate\Support\Facades\Route;
 | Public
 |--------------------------------------------------------------------------
 */
-/**
- * When APP_DEBUG=true: open GET /api/db-check in the browser (same origin as your Next app → /api/db-check).
- * Compare `laravel_database`, `host`, and `port` with the MySQL server phpMyAdmin is connected to.
- * If they differ, new users/products save to one server while you browse another — that is why rows “disappear”.
- */
-Route::get('/db-check', function () {
-    if (! config('app.debug')) {
-        return response()->json([
-            'message' => 'Set APP_DEBUG=true temporarily to use /api/db-check, then set it back to false.',
-        ], 404);
-    }
-
-    try {
-        $conn = config('database.default');
-        $cfg = config("database.connections.{$conn}");
-
-        return response()->json([
-            'laravel_connection' => $conn,
-            'laravel_database' => DB::connection()->getDatabaseName(),
-            'driver' => DB::connection()->getDriverName(),
-            'host' => $cfg['host'] ?? null,
-            'port' => $cfg['port'] ?? null,
-            'socket' => $cfg['unix_socket'] ?: null,
-            'users_count' => User::query()->count(),
-            'last_5_users' => User::query()->orderByDesc('id')->limit(5)->get(['id', 'email', 'created_at']),
-            'hint' => 'phpMyAdmin must use the SAME host/port (or socket) as above. XAMPP/MAMP often use a different MySQL than Homebrew on 127.0.0.1:3306.',
-        ]);
-    } catch (Throwable $e) {
-        return response()->json([
-            'error' => true,
-            'message' => $e->getMessage(),
-        ], 500);
-    }
+Route::middleware('throttle:10,1')->group(function () {
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/login', [AuthController::class, 'login']);
 });
-
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
 
 Route::get('/categories', [CategoryController::class, 'index']);
 Route::get('/categories/{category}', [CategoryController::class, 'show']);
@@ -60,7 +25,7 @@ Route::get('/categories/{category}', [CategoryController::class, 'show']);
 Route::get('/products', [ProductController::class, 'index']);
 Route::get('/products/{product}', [ProductController::class, 'show']);
 
-Route::post('/contact', [\App\Http\Controllers\ContactInquiryController::class, 'store']);
+Route::post('/contact', [\App\Http\Controllers\ContactInquiryController::class, 'store'])->middleware('throttle:5,1');
 
 /*
 |--------------------------------------------------------------------------

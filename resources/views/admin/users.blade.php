@@ -5,13 +5,23 @@
 @section('page_subtitle', 'Registered accounts and access roles')
 
 @section('content')
-<div class="admin-users-view">
+<div class="admin-users-view" x-data="{
+    init() {
+        adminDataTable('#users-table', @js(route('admin.data.users')), [
+            { data: 'id', name: 'id', render: (id) => '#' + id },
+            { data: 'name', name: 'name' },
+            { data: 'email', name: 'email' },
+            { data: 'is_admin', name: 'is_admin', searchable: false },
+            { data: 'created_at', name: 'created_at', searchable: false },
+        ], { emptyText: 'No registered users found.' });
+    }
+}">
     <div class="admin-action-bar">
-        <p>List of all registered customers and administrators in the store database.</p>
+        <p>All registered customers and administrators in the store database.</p>
     </div>
 
-    <div class="admin-table-container">
-        <table class="admin-table">
+    <div class="admin-table-container admin-dt">
+        <table id="users-table" class="admin-table" style="width: 100%;">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -21,38 +31,7 @@
                     <th>JOINED</th>
                 </tr>
             </thead>
-            <tbody>
-                @forelse($users as $user)
-                    <tr>
-                        <td style="font-weight: 700;">#{{ $user->id }}</td>
-                        <td style="font-weight: 600;">{{ $user->name }}</td>
-                        <td>
-                            <span style="font-family: ui-monospace, monospace; font-size: 13px;">{{ $user->email }}</span>
-                        </td>
-                        <td>
-                            <span class="status-badge {{ $user->is_admin ? 'completed' : 'pending' }}">
-                                {{ $user->is_admin ? 'ADMIN' : 'CUSTOMER' }}
-                            </span>
-                        </td>
-                        <td style="color: #64748b; font-size: 13px;">
-                            {{ $user->created_at ? $user->created_at->format('M d, Y') : '—' }}
-                        </td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colSpan="5" style="text-align: center; padding: 48px; color: #94a3b8;">
-                            No registered users found.
-                        </td>
-                    </tr>
-                @endforelse
-            </tbody>
         </table>
     </div>
-
-    @if($users->hasPages())
-        <div style="margin-top: 24px; display: flex; justify-content: center;">
-            {{ $users->links() }}
-        </div>
-    @endif
 </div>
 @endsection

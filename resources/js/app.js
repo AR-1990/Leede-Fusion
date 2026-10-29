@@ -10,39 +10,49 @@ document.addEventListener('alpine:init', () => {
         },
         init() {
             try {
-                const saved = localStorage.getItem('wahla_cart');
-                if (saved) this.items = JSON.parse(saved);
+                const saved = JSON.parse(localStorage.getItem('wahla_cart') || '[]');
+                // Only keep real catalogue items; give older saved items a line key.
+                this.items = (Array.isArray(saved) ? saved : [])
+                    .filter((item) => Number.isInteger(item.id))
+                    .map((item) => ({ ...item, key: item.key || `${item.id}:${item.size || ''}` }));
             } catch {
                 this.items = [];
             }
         },
         persist() {
-            localStorage.setItem('wahla_cart', JSON.stringify(this.items));
+            try {
+                localStorage.setItem('wahla_cart', JSON.stringify(this.items));
+            } catch {}
         },
         add(product, quantity = 1) {
-            const existing = this.items.find((item) => item.name === product.name);
+            const size = product.size || '';
+            const key = `${product.id}:${size}`;
+            const existing = this.items.find((item) => item.key === key);
             if (existing) {
-                existing.quantity += quantity;
+                existing.quantity = Math.min(20, existing.quantity + quantity);
             } else {
                 this.items.push({
-                    id: product.id || Math.random(),
+                    key,
+                    id: product.id,
+                    slug: product.slug || null,
                     name: product.name,
                     price: product.price,
                     image: product.image,
-                    quantity,
+                    size,
+                    quantity: Math.min(20, quantity),
                 });
             }
             this.persist();
             window.dispatchEvent(new CustomEvent('cart-updated'));
         },
-        remove(name) {
-            this.items = this.items.filter((item) => item.name !== name);
+        remove(key) {
+            this.items = this.items.filter((item) => item.key !== key);
             this.persist();
         },
-        updateQuantity(name, delta) {
+        updateQuantity(key, delta) {
             this.items = this.items.map((item) => {
-                if (item.name !== name) return item;
-                return { ...item, quantity: Math.max(1, item.quantity + delta) };
+                if (item.key !== key) return item;
+                return { ...item, quantity: Math.min(20, Math.max(1, item.quantity + delta)) };
             });
             this.persist();
         },
@@ -199,6 +209,23 @@ window.preloader = function preloader() {
             return 'WELCOME TO LEEDE FUSION';
         },
         init() {
+            // Full animation once per browser session; later page loads skip straight to the content.
+            let seen = false;
+            try {
+                seen = sessionStorage.getItem('lf_preloaded') === '1';
+                sessionStorage.setItem('lf_preloaded', '1');
+            } catch (e) {}
+            if (seen) {
+                this.visible = false;
+                this.$nextTick(() => {
+                    window.dispatchEvent(new CustomEvent('preloader-finished'));
+                    if (typeof window.initScrollReveal === 'function') {
+                        window.initScrollReveal();
+                    }
+                });
+                return;
+            }
+
             const timer = setInterval(() => {
                 if (this.count >= 100) {
                     clearInterval(timer);
@@ -221,14 +248,9 @@ window.preloader = function preloader() {
     };
 };
 
-window.triggerCustomDesign = function triggerCustomDesign(type = 'Custom Stitching / Sizing') {
-    const contactSection = document.getElementById('contact');
-    if (contactSection) {
-        window.dispatchEvent(new CustomEvent('select-inquiry-type', { detail: { type } }));
-        contactSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    } else {
-        window.location.href = `/?design=1#contact`;
-    }
+// Every "Start your design" CTA opens the Design Studio.
+window.triggerCustomDesign = function triggerCustomDesign() {
+    window.location.href = '/design';
 };
 
 window.heroSlider = function heroSlider(slides) {
@@ -285,19 +307,17 @@ window.heroSlider = function heroSlider(slides) {
         },
         handlePrimaryCta(slide) {
             if (!slide) return;
-            if (slide.primary_btn_action === 'custom-design' || (slide.primary_btn_text && slide.primary_btn_text.toLowerCase().includes('design'))) {
-                window.triggerCustomDesign('Custom Stitching / Sizing');
-            } else if (slide.primary_btn_url) {
+            if (slide.primary_btn_url && slide.primary_btn_action !== 'custom-design') {
                 window.location.href = slide.primary_btn_url;
             } else {
-                window.triggerCustomDesign('Custom Stitching / Sizing');
+                window.triggerCustomDesign();
             }
         },
         handleSecondaryCta(event, slide) {
             if (!slide) return;
-            if (slide.secondary_btn_action === 'custom-design') {
+            if (!slide.secondary_btn_url && slide.secondary_btn_action === 'custom-design') {
                 event.preventDefault();
-                window.triggerCustomDesign('Custom Stitching / Sizing');
+                window.triggerCustomDesign();
             }
             // Otherwise default link href executes naturally
         },
@@ -345,9 +365,12 @@ window.quickView = function quickView() {
         get currentImage() {
             return this.gallery[this.imageIndex] || '/hero-fashion.webp';
         },
+        sizes: ['XS', 'S', 'M', 'L', 'XL'],
+        size: '',
         openWith(detail) {
             this.product = detail;
             this.quantity = 1;
+            this.size = '';
             this.imageIndex = 0;
             this.modalImageLoaded = false;
             this.added = false;
@@ -360,20 +383,23 @@ window.quickView = function quickView() {
             document.body.style.overflow = '';
         },
         addToCart() {
-            if (!Alpine.store('auth').isAuthenticated) {
+            // Guests can shop; only a size is required.
+            if (!this.size) {
                 this.showAuthWarning = true;
                 setTimeout(() => {
                     this.showAuthWarning = false;
-                }, 3000);
+                }, 2500);
                 return;
             }
 
             Alpine.store('cart').add(
                 {
                     id: this.product.id,
+                    slug: this.product.slug,
                     name: this.product.name,
                     price: this.product.price,
                     image: this.currentImage,
+                    size: this.size,
                 },
                 this.quantity,
             );

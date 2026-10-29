@@ -5,8 +5,9 @@
 @section('page_subtitle', 'Fulfillment, tracking, and customer details')
 
 @section('content')
-<div class="orders-portal-wrap" x-data="{
-    orders: {{ Js::from($orders) }},
+<div class="orders-portal-wrap"
+     @dt-manage-order.window="openManageById($event.detail.id)"
+     x-data="{
     selected: null,
     editStatus: 'pending',
     editTracking: '',
@@ -24,14 +25,31 @@
     ],
 
     init() {
-        // Support ?manage={id} deep link
-        const params = new URLSearchParams(window.location.search);
-        const manageId = params.get('manage');
+        window.ordersTable = adminDataTable('#orders-table', @js(route('admin.data.orders')), [
+            { data: 'reference', name: 'reference' },
+            { data: 'tracking_number', name: 'tracking_number' },
+            { data: 'customer', name: 'customer' },
+            { data: 'created_at', name: 'created_at', searchable: false },
+            { data: 'total_amount', name: 'total_amount', searchable: false },
+            { data: 'status', name: 'status' },
+            { data: 'actions', orderable: false, searchable: false, className: 'dt-actions' },
+        ], {
+            order: [[3, 'desc']],
+            emptyText: 'No orders placed yet.',
+        });
+
+        // Support ?manage={id} deep link (from the dashboard).
+        const manageId = Number(new URLSearchParams(window.location.search).get('manage'));
         if (manageId) {
-            const ord = this.orders.find(o => o.id == manageId);
-            if (ord) {
-                this.openManage(ord);
-            }
+            this.openManageById(manageId);
+        }
+    },
+
+    async openManageById(id) {
+        try {
+            this.openManage(await adminRecord('order', id));
+        } catch (e) {
+            alert(e.message);
         }
     },
 
@@ -42,6 +60,18 @@
             'Authorization': token ? `Bearer ${token}` : '',
             'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]')?.content || ''
         };
+    },
+
+    orderRef(order) {
+        return 'ORD-' + String(order.id).padStart(5, '0');
+    },
+
+    customerName(order) {
+        return order.user?.name || order.customer_name || 'Guest customer';
+    },
+
+    customerContact(order) {
+        return order.customer_email || order.user?.email || order.customer_phone || order.customer_whatsapp || '';
     },
 
     getStatusLabel(val) {
@@ -93,10 +123,7 @@
                 return;
             }
 
-            const idx = this.orders.findIndex(o => o.id === this.selected.id);
-            if (idx !== -1) {
-                this.orders[idx] = data;
-            }
+            window.ordersTable?.ajax.reload(null, false);
             this.closeManage();
         } catch (err) {
             this.errorMessage = 'Network error while updating order.';
@@ -110,9 +137,9 @@
         <p>Update status and tracking. Customers can monitor live updates in their dashboard.</p>
     </div>
 
-    <!-- Orders Table -->
-    <div class="admin-table-container">
-        <table class="admin-table">
+    <!-- Orders Table (server-side) -->
+    <div class="admin-table-container admin-dt">
+        <table id="orders-table" class="admin-table" style="width: 100%;">
             <thead>
                 <tr>
                     <th>ORDER</th>
@@ -121,40 +148,9 @@
                     <th>DATE</th>
                     <th>AMOUNT</th>
                     <th>STATUS</th>
-                    <th style="text-align: right;">ACTIONS</th>
+                    <th>ACTIONS</th>
                 </tr>
             </thead>
-            <tbody>
-                <template x-for="order in orders" :key="order.id">
-                    <tr>
-                        <td style="font-weight: 700;" x-text="'#ORD-' + order.id"></td>
-                        <td>
-                            <code style="font-family: ui-monospace, monospace; font-size: 12px; background: #f8fafc; padding: 2px 6px; border-radius: 4px; border: 1px solid #e2e8f0;" x-text="order.tracking_number || '—'"></code>
-                        </td>
-                        <td>
-                            <div style="font-weight: 600;" x-text="order.user?.name || order.customer_name || 'Guest'"></div>
-                            <div style="font-size: 11px; color: #94a3b8;" x-text="order.customer_email || order.user?.email || ''"></div>
-                        </td>
-                        <td style="color: #64748b; font-size: 13px;" x-text="new Date(order.created_at).toLocaleDateString()"></td>
-                        <td style="font-weight: 700;" x-text="'Rs. ' + Number(order.total_amount).toLocaleString()"></td>
-                        <td>
-                            <span class="status-badge" :class="order.status" x-text="getStatusLabel(order.status)"></span>
-                        </td>
-                        <td style="text-align: right;">
-                            <button type="button" class="btn-table-action" @click="openManage(order)">
-                                Manage
-                            </button>
-                        </td>
-                    </tr>
-                </template>
-                <template x-if="orders.length === 0">
-                    <tr>
-                        <td colSpan="7" style="text-align: center; padding: 48px; color: #94a3b8;">
-                            No orders placed yet.
-                        </td>
-                    </tr>
-                </template>
-            </tbody>
         </table>
     </div>
 
@@ -164,8 +160,8 @@
             <div class="portal-modal-panel portal-modal-panel--wide">
                 <div class="portal-modal-head">
                     <div>
-                        <h2 class="portal-modal-title" x-text="'ORDER #ORD-' + selected.id"></h2>
-                        <p class="portal-modal-sub" x-text="(selected.user?.name || selected.customer_name || 'Customer') + ' · ' + (selected.user?.email || selected.customer_email || '')"></p>
+                        <h2 class="portal-modal-title" x-text="'Order ' + orderRef(selected)"></h2>
+                        <p class="portal-modal-sub" x-text="[customerName(selected), customerContact(selected)].filter(Boolean).join(' · ')"></p>
                     </div>
                     <button type="button" class="portal-modal-close" aria-label="Close" @click="closeManage()">
                         &times;
@@ -179,16 +175,22 @@
                     <div class="portal-detail-grid" style="margin-bottom: 20px;">
                         <div class="portal-detail-block" style="grid-column: 1 / -1;">
                             <p class="portal-detail-label">Ship to</p>
-                            <p class="portal-detail-value" style="font-weight: 700;" x-text="selected.customer_name"></p>
-                            <p class="portal-detail-value" style="margin-top: 4px;" x-text="selected.customer_email"></p>
+                            <p class="portal-detail-value" style="font-weight: 700;" x-text="customerName(selected)"></p>
+                            <p class="portal-detail-value" style="margin-top: 4px;" x-show="selected.customer_email || selected.user?.email" x-text="selected.customer_email || selected.user?.email"></p>
                             <p class="portal-detail-value" style="margin-top: 4px;">
                                 Phone: <span x-text="selected.customer_phone || '—'"></span>
                                 <template x-if="selected.customer_whatsapp">
                                     <span style="margin-left: 12px; color: #16a34a;">(WhatsApp: <span x-text="selected.customer_whatsapp"></span>)</span>
                                 </template>
                             </p>
-                            <p class="portal-detail-value" style="margin-top: 10px; white-space: pre-wrap; background: #fff; padding: 8px 12px; border-radius: 6px; border: 1px solid #e2e8f0;" x-text="selected.shipping_address || '—'"></p>
+                            <p class="portal-detail-value" style="margin-top: 10px; white-space: pre-wrap; background: #fff; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--admin-border);" x-text="[selected.shipping_address, selected.city].filter(Boolean).join(', ') || '—'"></p>
                         </div>
+                        <template x-if="selected.notes">
+                            <div class="portal-detail-block" style="grid-column: 1 / -1;">
+                                <p class="portal-detail-label">Customer notes</p>
+                                <p class="portal-detail-value" style="white-space: pre-wrap;" x-text="selected.notes"></p>
+                            </div>
+                        </template>
                     </div>
 
                     <!-- Line Items List -->
@@ -198,7 +200,10 @@
                             <li>
                                 <span>
                                     <strong x-text="item.product?.name || 'Item'"></strong>
-                                    <span style="color: #64748b;" x-text="' × ' + item.quantity"></span>
+                                    <span style="color: var(--admin-text-muted);" x-text="' × ' + item.quantity"></span>
+                                    <template x-if="item.size">
+                                        <span class="admin-pill" style="margin-left: 8px;" x-text="'Size ' + item.size"></span>
+                                    </template>
                                 </span>
                                 <span style="font-weight: 700;" x-text="'Rs. ' + Number(item.price).toLocaleString()"></span>
                             </li>
@@ -212,7 +217,7 @@
                                 <label class="portal-detail-label" for="admin-order-status">ORDER STATUS</label>
                                 <select id="admin-order-status" 
                                         class="admin-input" 
-                                        style="width: 100%; box-sizing: border-box; padding: 12px; margin-top: 6px; border: 1px solid #cbd5e1; border-radius: 10px; font-size: 14px; background: #fff;" 
+                                        style="width: 100%; box-sizing: border-box; padding: 12px; margin-top: 6px; border: 1px solid var(--admin-border-strong); border-radius: 10px; font-size: 14px; background: #fff;" 
                                         x-model="editStatus">
                                     <template x-for="s in statuses" :key="s.value">
                                         <option :value="s.value" x-text="s.label"></option>
@@ -225,7 +230,7 @@
                                 <input id="admin-order-tracking" 
                                        type="text" 
                                        class="admin-input" 
-                                       style="width: 100%; box-sizing: border-box; padding: 12px; margin-top: 6px; border: 1px solid #cbd5e1; border-radius: 10px; font-family: ui-monospace, monospace; font-size: 13px;" 
+                                       style="width: 100%; box-sizing: border-box; padding: 12px; margin-top: 6px; border: 1px solid var(--admin-border-strong); border-radius: 10px; font-family: ui-monospace, monospace; font-size: 13px;" 
                                        x-model="editTracking" 
                                        placeholder="e.g. WCH-00000001 or TCS-89218273">
                             </div>
